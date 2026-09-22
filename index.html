@@ -1,0 +1,1721 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>สมุดคอร์ด</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E7ECF2; --surface:#F5F7FA; --raised:#FFFFFF; --ink:#141E30; --muted:#566277; --line:#C5CEDA;
+  --chord:#1F4ED8; --chord-soft:#DDE6FB; --on-chord:#FFFFFF;
+  --amber:#F2A900; --amber-soft:#F8DE9C; --on-amber:#1A1300; --danger:#B42318;
+  --ui:'Prompt','Noto Sans Thai','Tahoma',system-ui,sans-serif;
+  --lyric:'Sarabun','Noto Sans Thai','Tahoma',system-ui,sans-serif;
+  color-scheme:light dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E131B; --surface:#151C27; --raised:#1A2230; --ink:#E6ECF4; --muted:#92A0B4; --line:#2B3647;
+    --chord:#8AAAFF; --chord-soft:#1E2B4A; --on-chord:#0B1220;
+    --amber:#FFC233; --amber-soft:#4A3A10; --on-amber:#1A1300; --danger:#FF8A80;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E131B; --surface:#151C27; --raised:#1A2230; --ink:#E6ECF4; --muted:#92A0B4; --line:#2B3647;
+  --chord:#8AAAFF; --chord-soft:#1E2B4A; --on-chord:#0B1220;
+  --amber:#FFC233; --amber-soft:#4A3A10; --on-amber:#1A1300; --danger:#FF8A80;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--lyric);font-size:16px;line-height:1.55;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--chord);outline-offset:2px}
+
+.app{max-width:920px;margin:0 auto;padding:20px 16px calc(var(--dock-h,96px) + 32px)}
+h1{font:700 28px/1.2 var(--ui);margin:0;letter-spacing:-.01em}
+.sub{margin:4px 0 0;color:var(--muted);font-size:15px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+
+/* buttons */
+.btn{font:500 14px/1 var(--ui);border:1px solid var(--line);background:var(--raised);color:var(--ink);border-radius:8px;padding:0 14px;min-height:40px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--chord);border-color:var(--chord);color:var(--on-chord)}
+.btn.ghost{background:transparent;border-color:transparent;padding:0 8px;color:var(--muted)}
+.btn.ghost:hover{color:var(--ink)}
+.btn.danger{color:var(--danger)}
+.btn.slim{min-height:34px;padding:0 10px;font-size:13px}
+.sq{width:40px;height:40px;border-radius:8px;border:1px solid var(--line);background:var(--raised);font:600 20px/1 var(--ui);cursor:pointer;display:grid;place-items:center;padding:0}
+.sq:hover{border-color:var(--muted)}
+.sq:active{background:var(--chord-soft)}
+
+/* form controls */
+input[type=text],input[type=search],input[type=number],select,textarea,input:not([type]){
+  width:100%;border:1px solid var(--line);background:var(--raised);border-radius:8px;padding:10px 12px;min-height:42px
+}
+textarea{font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,'Sarabun',monospace;font-size:15px;line-height:1.5;resize:vertical;min-height:340px;white-space:pre;overflow:auto}
+.field label,.field .flabel{display:block;font:500 13px var(--ui);color:var(--muted);margin-bottom:5px}
+.hint{font-size:13px;color:var(--muted);margin:5px 0 0}
+
+/* library */
+.finder{display:grid;grid-template-columns:1fr 150px;gap:8px;margin-bottom:8px}
+.row{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line);padding:12px 4px;cursor:pointer;color:inherit}
+.row:hover{background:var(--surface)}
+ul.songs{list-style:none;margin:0;padding:0}
+.keytile{width:52px;height:52px;border-radius:6px;display:grid;place-items:center;font:700 21px var(--ui);background:var(--chord-soft);color:var(--chord)}
+.rmeta{display:flex;flex-direction:column;min-width:0}
+.rtitle{font:600 17px/1.3 var(--ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rartist{color:var(--muted);font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rtempo{text-align:right;font-family:var(--ui);line-height:1.1}
+.rtempo b{display:block;font-size:20px;font-weight:600}
+.rtempo small{color:var(--muted);font-size:12px}
+.empty{padding:36px 8px;text-align:center;color:var(--muted)}
+.empty h2{font:600 20px var(--ui);color:var(--ink);margin:0 0 6px}
+.empty .acts{justify-content:center;margin-top:16px}
+.foot{margin:28px 0 0;font-size:13px;color:var(--muted)}
+.loading{color:var(--muted);padding:40px 0;text-align:center}
+
+/* song view */
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 10px -8px}
+.songhead h1{font-size:30px}
+.artist{margin:2px 0 0;color:var(--muted);font-size:17px}
+.chips{display:flex;gap:8px;margin:10px 0 0;flex-wrap:wrap}
+.chips span{font:500 13px var(--ui);border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--surface)}
+.tools{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-top:14px;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper .lbl{font:500 13px var(--ui);color:var(--muted);margin-right:2px}
+.stepper .val{min-width:3ch;text-align:center;font:600 17px var(--ui)}
+.keyinfo{font:500 15px var(--ui);margin:12px 0 0;display:flex;flex-direction:column;gap:2px}
+.keyinfo .k{font-weight:600;font-size:18px}
+.keyinfo .c{color:var(--muted);font-size:14px}
+details.opts{margin-top:10px}
+details.opts summary{cursor:pointer;font:500 13px var(--ui);color:var(--muted);padding:6px 0}
+.optgrid{display:flex;flex-wrap:wrap;gap:14px 26px;padding:8px 0 4px;align-items:center}
+.optgrid .lbl{font:500 13px var(--ui);color:var(--muted);margin-right:8px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--raised);padding:0 12px;min-height:36px;font:500 13px var(--ui);cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--chord);color:var(--on-chord)}
+.dgs{display:flex;gap:12px;overflow-x:auto;padding:14px 2px 6px;margin-top:6px;border-bottom:1px solid var(--line)}
+.dg{flex:0 0 auto;text-align:center;margin:0;font:600 14px var(--ui);color:var(--chord)}
+.dg svg{display:block}
+.dl{stroke:var(--muted);stroke-width:.8}
+.nut{fill:var(--ink)}
+.dot{fill:var(--chord)}
+.om{fill:none;stroke:var(--muted);stroke-width:1}
+.xm,.bf{fill:var(--muted);font:600 8px var(--ui)}
+.bfret{fill:var(--muted);font:600 7px var(--ui)}
+
+.sheet{font-family:var(--lyric);font-size:var(--fs,19px);line-height:1.4;margin-top:22px}
+.ln{margin:0 0 .45em}
+.ln.plain{white-space:pre-wrap}
+.sg{display:inline-flex;flex-direction:column;vertical-align:top}
+.ch{font-family:var(--ui);font-weight:600;color:var(--chord);font-size:.86em;line-height:1.35;min-height:1.35em;padding-right:.75em;white-space:pre}
+.ly{white-space:pre-wrap;min-height:1.4em}
+.gap{height:.9em}
+.sec-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:1.3em 0 .55em}
+.blk:first-child .sec-row{margin-top:0}
+.sec{display:inline-block;padding:1px 12px 1px 10px;border-left:3px solid var(--chord);background:var(--surface);font:600 .78em var(--ui);color:var(--muted)}
+.tabbtn{font:600 .72em var(--ui);border:1px solid var(--line);background:var(--raised);color:var(--muted);border-radius:999px;padding:1px 11px;cursor:pointer}
+.tabbtn.on{background:var(--chord);border-color:var(--chord);color:var(--on-chord)}
+.ch[data-mk]{color:var(--muted);font-weight:400}
+.blk-main.has-strum{display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,30%);gap:18px;align-items:start}
+.tabimg{margin:0 0 .8em}
+.tabimg img,.strumimg img{display:block;max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:6px;cursor:zoom-in}
+.strumimg{margin:.2em 0 0}
+.strumimg figcaption{font:500 12px var(--ui);color:var(--muted);margin-top:4px}
+figure.broken img{display:none}
+figure.broken::after{content:'รูปหายไป';color:var(--muted);font:500 12px var(--ui)}
+@media (max-width:480px){ .blk-main.has-strum{grid-template-columns:1fr} .strumimg{order:-1;max-width:220px} }
+
+/* cover */
+.cover{width:52px;height:52px;border-radius:6px;overflow:hidden;background:var(--chord-soft)}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.cover.broken img,.cvbox.broken img{display:none}
+.rkey{display:block;font:600 13px var(--ui);color:var(--chord);margin-bottom:2px}
+.songhead{display:flex;gap:16px;align-items:center}
+.hcover{width:88px;height:88px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;flex:0 0 auto;background:var(--chord-soft)}
+.cvrow{display:flex;gap:14px;align-items:center}
+.cvbox{width:84px;height:84px;border-radius:8px;overflow:hidden;border:1px dashed var(--line);display:grid;place-items:center;color:var(--muted);font:13px var(--ui);flex:0 0 auto}
+.cvbox.filled{border-style:solid}
+.cvbox img{width:100%;height:100%;object-fit:cover;cursor:zoom-in;display:block}
+
+/* auto scroll */
+.asbar{position:fixed;right:12px;bottom:calc(var(--dock-h,96px) + 12px);z-index:15;display:flex;align-items:center;gap:6px;background:var(--raised);border:1px solid var(--line);border-radius:999px;padding:5px 8px 5px 5px;box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.asplay{width:44px;height:44px;border-radius:50%;border:0;background:var(--chord);color:var(--on-chord);display:grid;place-items:center;cursor:pointer;padding:0}
+.asplay.run{background:var(--amber);color:var(--on-amber)}
+.asspd{display:flex;gap:2px}
+.asspd button{width:30px;height:36px;border-radius:8px;border:0;background:transparent;font:600 14px var(--ui);color:var(--muted);cursor:pointer;padding:0}
+.asspd button.on{background:var(--chord-soft);color:var(--chord)}
+
+/* github sync */
+.ghform{display:grid;gap:10px;margin-top:10px}
+.steps{padding-left:20px;margin:8px 0;color:var(--muted);font-size:14px;line-height:1.65}
+.steps a{color:var(--chord)}
+.modal code,.steps code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;background:var(--surface);padding:0 4px;border-radius:4px}
+.foot .btn{margin-left:8px}
+
+/* section media panel + scan */
+.mediaPanel{margin-top:22px;border-top:1px solid var(--line);padding-top:16px}
+.mediaPanel h2{font:600 18px var(--ui);margin:0 0 4px}
+.medrow{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:12px;margin-top:10px}
+.medname{font:600 15px var(--ui);margin-bottom:8px}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.slot-h{font:500 12px var(--ui);color:var(--muted);margin-bottom:6px}
+.thumb{display:block;width:100%;max-height:120px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:6px;cursor:zoom-in}
+.thumb.none{display:grid;place-items:center;height:64px;background:transparent;border-style:dashed;color:var(--muted);font:13px var(--ui);cursor:default}
+.slot-a{display:flex;gap:6px;margin-top:6px}
+.orph{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-size:14px}
+.orph select{width:auto;min-height:34px}
+@media (max-width:560px){ .slots{grid-template-columns:1fr} }
+.scanbox{border:1px solid var(--chord);background:var(--chord-soft);border-radius:8px;padding:12px 14px;font-size:15px}
+.scanbox ul{margin:6px 0 0 18px;padding:0}
+.scanpics{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap}
+.scanpics img{height:64px;border-radius:4px;border:1px solid var(--line);cursor:zoom-in;background:#fff}
+.modal.wide{max-width:920px}
+.modal img.zoom{max-width:100%;height:auto;display:block;margin:0 auto;background:#fff}
+
+/* editor */
+.edtitle{font-size:24px;margin:2px 0 16px}
+.editor{display:grid;gap:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.split{display:grid;grid-template-columns:1fr;gap:16px}
+.tb{display:flex;gap:8px;margin-bottom:8px}
+.preview{margin-top:0;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px;min-height:340px;overflow-x:auto}
+.err{color:var(--danger);font:500 14px var(--ui);min-height:1em}
+details.help{margin-top:10px;font-size:14px;color:var(--muted)}
+details.help summary{cursor:pointer;font:500 13px var(--ui)}
+details.help pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;color:var(--ink);font-size:13px;line-height:1.5}
+@media (min-width:860px){ .split{grid-template-columns:1fr 1fr} }
+@media (max-width:560px){ .grid4{grid-template-columns:1fr 1fr} .grid2{grid-template-columns:1fr} .finder{grid-template-columns:1fr} }
+
+/* drag chords */
+.btn.on{background:var(--chord);border-color:var(--chord);color:var(--on-chord)}
+.btn:disabled{opacity:.45;cursor:default}
+.pvhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px;min-height:34px}
+.drag-on .ch[data-k]{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;background:var(--chord-soft);border-radius:5px;padding:0 .4em;margin-right:.3em}
+.drag-on .ch[data-k]:hover{outline:1.5px solid var(--chord)}
+.ch.lifted{opacity:.25}
+.chost{position:fixed;z-index:60;pointer-events:none;transform:translate(-50%,-150%);font:600 17px var(--ui);color:var(--on-chord);background:var(--chord);border-radius:6px;padding:3px 10px;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.dcaret{position:fixed;z-index:59;pointer-events:none;width:3px;border-radius:2px;background:var(--amber);box-shadow:0 0 0 2px var(--amber-soft)}
+body.dragging,body.dragging *{cursor:grabbing !important;user-select:none;-webkit-user-select:none}
+
+/* metronome dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--raised);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}
+.dock-inner{max-width:920px;margin:0 auto}
+.dock-main{display:flex;align-items:center;gap:12px}
+.play{width:54px;height:54px;flex:0 0 auto;border-radius:50%;border:0;background:var(--amber);color:var(--on-amber);display:grid;place-items:center;cursor:pointer;padding:0}
+.play:active{transform:scale(.96)}
+.bpmbox{display:flex;align-items:center;gap:6px}
+.bpmval{display:flex;flex-direction:column;align-items:center;width:64px;line-height:1}
+.bpmval input{width:64px;min-height:0;border:0;background:transparent;padding:0;text-align:center;font:700 28px var(--ui);-moz-appearance:textfield}
+.bpmval input::-webkit-outer-spin-button,.bpmval input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.bpmval span{font:500 11px var(--ui);color:var(--muted);margin-top:2px}
+.lamps{display:flex;align-items:center;gap:8px;flex:1;justify-content:center;min-width:0}
+.lamp{width:13px;height:13px;border-radius:50%;background:var(--line);flex:0 0 auto}
+.lamp.first{width:18px;height:18px;border:2px solid var(--amber);background:transparent}
+.lamp.on{background:var(--amber);box-shadow:0 0 0 5px var(--amber-soft);border-color:var(--amber)}
+.dock-more{display:grid;gap:12px;padding-top:12px;margin-top:10px;border-top:1px solid var(--line)}
+.dock-more .row2{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:end}
+.dock-more label{display:flex;flex-direction:column;gap:4px;font:500 12px var(--ui);color:var(--muted)}
+.dock-more input[type=range]{width:100%;accent-color:var(--amber)}
+.dock-more select{min-height:38px;width:auto}
+.vol{width:130px}
+@media (max-width:460px){ .lamps{display:none} .dock-main{justify-content:space-between} }
+
+.toast{position:fixed;left:50%;bottom:calc(var(--dock-h,96px) + 16px);transform:translateX(-50%);background:var(--ink);color:var(--bg);font:500 14px var(--ui);padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:40;max-width:calc(100% - 32px)}
+.toast.show{opacity:1}
+.modal-back{position:fixed;inset:0;background:rgba(8,12,20,.6);z-index:50;display:grid;place-items:center;padding:16px}
+.modal{background:var(--raised);border-radius:12px;padding:22px;width:100%;max-width:520px;max-height:90%;overflow:auto}
+.modal h2{font:600 19px var(--ui);margin:0 0 8px}
+.modal p{margin:0 0 14px;color:var(--muted)}
+.modal .acts{justify-content:flex-end;margin-top:14px}
+.modal textarea{min-height:160px;font-size:12px}
+@media (prefers-reduced-motion:reduce){ .toast{transition:none} .play:active{transform:none} }
+</style>
+</head>
+<body>
+<div class="app"><div id="view"></div></div>
+
+<section class="dock" id="dock" aria-label="เมโทรนอม">
+  <div class="dock-inner">
+    <div class="dock-main">
+      <button class="play" id="mPlay" data-a="mplay" aria-label="เริ่มเมโทรนอม">
+        <svg id="mIcon" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+      </button>
+      <div class="bpmbox">
+        <button class="sq" data-a="mminus" aria-label="ลด BPM">−</button>
+        <label class="bpmval"><input id="bpmIn" type="number" inputmode="numeric" min="30" max="240" value="100" aria-label="BPM"><span>BPM</span></label>
+        <button class="sq" data-a="mplus" aria-label="เพิ่ม BPM">+</button>
+      </div>
+      <div class="lamps" id="lamps" aria-hidden="true"></div>
+      <button class="btn slim" id="mMore" data-a="mmore" aria-expanded="false" aria-controls="dockMore">ตั้งค่า</button>
+    </div>
+    <div class="dock-more" id="dockMore" hidden>
+      <label>ความเร็ว<input id="bpmRange" type="range" min="30" max="240" value="100"></label>
+      <div class="row2">
+        <button class="btn" data-a="tap">แตะเพื่อวัดจังหวะ</button>
+        <label>อัตราจังหวะ
+          <select id="beatsSel">
+            <option value="2">2/4</option><option value="3">3/4</option><option value="4" selected>4/4</option>
+            <option value="5">5/4</option><option value="6">6/8</option>
+          </select>
+        </label>
+        <label class="vol">ความดัง<input id="volRange" type="range" min="0" max="100" value="80"></label>
+      </div>
+      <div class="row2" id="songTempoRow"></div>
+    </div>
+  </div>
+</section>
+
+<div class="asbar" id="asBar" hidden>
+  <button class="asplay" id="asPlay" data-a="as" aria-label="เริ่มเลื่อนอัตโนมัติ"><svg id="asIcon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></button>
+  <div class="asspd" role="group" aria-label="ความเร็วการเลื่อนอัตโนมัติ ระดับ 1 ถึง 5">
+    <button data-a="aspeed" data-v="1" title="ช้ามาก">1</button><button data-a="aspeed" data-v="2" title="ช้า">2</button><button data-a="aspeed" data-v="3" title="ปานกลาง">3</button><button data-a="aspeed" data-v="4" title="เร็ว">4</button><button data-a="aspeed" data-v="5" title="เร็วมาก">5</button>
+  </div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="modalRoot"></div>
+<input type="file" id="mediaFile" accept="image/*" hidden>
+<input type="file" id="scanFile" accept="image/*" multiple hidden>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mod12 = n => ((n % 12) + 12) % 12;
+
+/* ================= music theory ================= */
+const SHARP = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const FLAT  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const BASE  = {C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+const pcOf = n => { let p = BASE[n[0]]; if (n[1] === '#') p++; else if (n[1] === 'b') p--; return mod12(p); };
+const Q_OK = /^(?:maj|min|dim|aug|sus|add|m|M|\+|-|°|ø|\d|#|b|\(|\)|,)*$/;
+
+function parseChord(tok) {
+  const m = /^([A-G][#b]?)([^\/\s]*)(?:\/([A-G][#b]?))?$/.exec(tok);
+  if (!m || !Q_OK.test(m[2])) return null;
+  return { root: m[1], q: m[2], bass: m[3] || null, raw: tok };
+}
+function fmtChord(c, shift, flats, keepRaw) {
+  if (shift === 0 && keepRaw) return c.raw;
+  const N = flats ? FLAT : SHARP;
+  return N[mod12(pcOf(c.root) + shift)] + c.q + (c.bass ? '/' + N[mod12(pcOf(c.bass) + shift)] : '');
+}
+function parseKey(s) {
+  const m = /^\s*([A-Ga-g])\s*([#b♯♭]?)\s*(m|min|minor)?\s*$/.exec(s || '');
+  if (!m) return null;
+  const L = m[1].toUpperCase();
+  const acc = m[2] === '♯' ? '#' : m[2] === '♭' ? 'b' : m[2];
+  const minor = !!m[3];
+  return { pc: pcOf(L + acc), minor, text: L + acc + (minor ? 'm' : '') };
+}
+const FLAT_MAJ = new Set([5,10,3,8,1,6]);
+const FLAT_MIN = new Set([2,7,0,5,10,3]);
+const usesFlats = (pc, minor) => (minor ? FLAT_MIN : FLAT_MAJ).has(pc);
+
+/* ---------- guitar chord shapes ---------- */
+const OPEN = {
+  'C':[-1,3,2,0,1,0],'C7':[-1,3,2,3,1,0],'Cmaj7':[-1,3,2,0,0,0],'Cadd9':[-1,3,2,0,3,0],
+  'G':[3,2,0,0,0,3],'G7':[3,2,0,0,0,1],'Gmaj7':[3,2,0,0,0,2],
+  'D':[-1,-1,0,2,3,2],'D7':[-1,-1,0,2,1,2],'Dm':[-1,-1,0,2,3,1],'Dm7':[-1,-1,0,2,1,1],
+  'Dmaj7':[-1,-1,0,2,2,2],'Dsus2':[-1,-1,0,2,3,0],'Dsus4':[-1,-1,0,2,3,3]
+};
+const E_FORM = { '':[0,2,2,1,0,0], 'm':[0,2,2,0,0,0], '7':[0,2,0,1,0,0], 'm7':[0,2,0,0,0,0],
+  'maj7':[0,2,1,1,0,0], 'sus4':[0,2,2,2,0,0], '6':[0,2,2,1,2,0] };
+const A_FORM = { '':[-1,0,2,2,2,0], 'm':[-1,0,2,2,1,0], '7':[-1,0,2,0,2,0], 'm7':[-1,0,2,0,1,0],
+  'maj7':[-1,0,2,1,2,0], 'sus2':[-1,0,2,2,0,0], 'sus4':[-1,0,2,2,3,0], 'add9':[-1,0,2,4,2,0],
+  'dim':[-1,0,1,2,1,-1], '6':[-1,0,2,2,2,2], 'm6':[-1,0,2,2,1,2], '5':[-1,0,2,2,-1,-1] };
+function normQ(q) {
+  q = q.replace(/[()]/g, '');
+  if (q === 'maj') return '';
+  if (q === 'M7' || q === 'maj7') return 'maj7';
+  q = q.replace(/^min/, 'm').replace(/^-/, 'm');
+  if (q === 'sus') q = 'sus4';
+  if (q === '°') q = 'dim';
+  return q;
+}
+function chordShape(c) {
+  if (c.bass) return null;
+  const q = normQ(c.q), pc = pcOf(c.root);
+  const canon = SHARP[pc] + q;
+  if (OPEN[canon]) return { frets: OPEN[canon], barre: null };
+  const cands = [];
+  if (E_FORM[q]) cands.push({ form: E_FORM[q], fret: mod12(pc - 4), from: 0 });
+  if (A_FORM[q]) cands.push({ form: A_FORM[q], fret: mod12(pc - 9), from: 1 });
+  if (!cands.length) return null;
+  cands.sort((a, b) => a.fret - b.fret);
+  const p = cands[0];
+  return { frets: p.form.map(v => v < 0 ? -1 : v + p.fret), barre: p.fret > 0 ? { fret: p.fret, from: p.from } : null };
+}
+function diagramSvg(shape, label) {
+  const { frets, barre } = shape;
+  const pos = frets.filter(f => f > 0);
+  const max = pos.length ? Math.max(...pos) : 0, min = pos.length ? Math.min(...pos) : 1;
+  const base = max <= 5 ? 1 : min;
+  const X = i => 12 + i * 8, top = 20, fh = 12, rows = 5;
+  let s = `<svg viewBox="0 0 68 92" width="66" height="90" role="img" aria-label="คอร์ด ${esc(label)}">`;
+  for (let i = 0; i < 6; i++) s += `<line class="dl" x1="${X(i)}" y1="${top}" x2="${X(i)}" y2="${top + rows * fh}"/>`;
+  for (let r = 0; r <= rows; r++) s += `<line class="dl" x1="${X(0)}" y1="${top + r * fh}" x2="${X(5)}" y2="${top + r * fh}"/>`;
+  if (base === 1) s += `<rect class="nut" x="${X(0) - 1}" y="${top - 2.5}" width="${X(5) - X(0) + 2}" height="3.5"/>`;
+  else s += `<text class="bfret" x="${X(5) + 5}" y="${top + fh * 0.7}">${base}fr</text>`;
+  frets.forEach((f, i) => {
+    if (f === 0) s += `<circle class="om" cx="${X(i)}" cy="${top - 8}" r="2.6"/>`;
+    else if (f < 0) s += `<text class="xm" x="${X(i)}" y="${top - 5}" text-anchor="middle">x</text>`;
+  });
+  if (barre) {
+    const y = top + (barre.fret - base + 0.5) * fh;
+    s += `<rect class="dot" x="${X(barre.from) - 3.6}" y="${y - 3.6}" width="${X(5) - X(barre.from) + 7.2}" height="7.2" rx="3.6"/>`;
+  }
+  frets.forEach((f, i) => {
+    if (f > 0 && !(barre && f === barre.fret && i >= barre.from))
+      s += `<circle class="dot" cx="${X(i)}" cy="${top + (f - base + 0.5) * fh}" r="3.6"/>`;
+  });
+  return s + '</svg>';
+}
+
+/* ================= chord sheet parser ================= */
+const isMark = ch => /\p{Mn}/u.test(ch);
+const DECOR = /^(?:\|\|?|\/|-|\(?x\d+\)?|N\.?C\.?)$/i;
+
+function colToIdx(s, col) {
+  let vc = 0, i = 0;
+  for (const ch of s) {
+    if (!isMark(ch)) { if (vc >= col) return i; vc++; }
+    i += ch.length;
+  }
+  return s.length;
+}
+function chordLineToks(line) {
+  const t = line.replace(/\t/g, '    '), re = /\S+/g, toks = [];
+  let m, chords = 0;
+  while ((m = re.exec(t))) {
+    const isC = parseChord(m[0]) !== null;
+    if (isC) chords++; else if (!DECOR.test(m[0])) return null;
+    toks.push({ col: m.index, tok: m[0] });
+  }
+  return chords ? toks : null;
+}
+function mkSeg(tok, text) {
+  const c = parseChord(tok);
+  return c ? { chord: c, text } : { chord: null, mark: tok, text };
+}
+function mergeLine(toks, lyric) {
+  lyric = lyric.replace(/\t/g, '    ').replace(/\s+$/, '');
+  const pts = toks.map(k => ({ idx: colToIdx(lyric, k.col), tok: k.tok }));
+  const segs = [];
+  if (pts[0].idx > 0) segs.push({ chord: null, text: lyric.slice(0, pts[0].idx) });
+  pts.forEach((p, i) => {
+    const end = i + 1 < pts.length ? pts[i + 1].idx : lyric.length;
+    segs.push(mkSeg(p.tok, lyric.slice(p.idx, end)));
+  });
+  return segs;
+}
+function parseSheet(body) {
+  const raw = (body || '').replace(/\r\n?/g, '\n').split('\n');
+  const out = [];
+  for (let i = 0; i < raw.length; i++) {
+    const line = raw[i], t = line.trim();
+    if (!t) { out.push({ type: 'blank' }); continue; }
+    let m;
+    if ((m = /^#+\s*(.+)$/.exec(t))) { out.push({ type: 'section', text: m[1] }); continue; }
+    if ((m = /^\[([^\]]+)\]$/.exec(t)) && !parseChord(m[1].trim()) && !DECOR.test(m[1].trim())) { out.push({ type: 'section', text: m[1].trim() }); continue; }
+    const toks = chordLineToks(line);
+    if (toks) {
+      const nxt = raw[i + 1];
+      if (nxt !== undefined && nxt.trim() && !chordLineToks(nxt) && !/^\s*#/.test(nxt) && !/^\s*\[[^\]]+\]\s*$/.test(nxt)) {
+        out.push({ type: 'line', segs: mergeLine(toks, nxt), src: [i, i + 1] }); i++;
+      } else out.push({ type: 'line', segs: mergeLine(toks, ''), src: [i, i] });
+      continue;
+    }
+    const src = line.replace(/\t/g, '    ').trim();
+    const segs = []; let cur = null, pos = 0;
+    const seg = (slot, text) => slot ? (slot.chord ? { chord: slot.chord, text } : { chord: null, mark: slot.mark, text }) : { chord: null, text };
+    for (const mm of src.matchAll(/\[([^\]]*)\]/g)) {
+      const tk = mm[1].trim(), c = parseChord(tk);
+      const slot = c ? { chord: c } : DECOR.test(tk) ? { mark: tk } : null;
+      if (!slot) continue;
+      const text = src.slice(pos, mm.index);
+      if (text || cur) segs.push(seg(cur, text));
+      cur = slot; pos = mm.index + mm[0].length;
+    }
+    segs.push(seg(cur, src.slice(pos)));
+    out.push({ type: 'line', segs, src: [i, i] });
+  }
+  const occ = {};
+  for (const L of out) if (L.type === 'section') {
+    const b = L.text.trim().replace(/\s+/g, ' ').toLowerCase(), n = occ[b] || 0;
+    occ[b] = n + 1; L.key = b + '#' + n;
+  }
+  return out;
+}
+function firstChord(lines) {
+  for (const L of lines) if (L.segs) for (const s of L.segs) if (s.chord) return s.chord;
+  return null;
+}
+function effKey(song, lines) {
+  const k = parseKey(song.key);
+  if (k) return { ...k, guess: false };
+  const c = firstChord(lines);
+  if (!c) return null;
+  const minor = /^(m(?!aj)|min)/.test(c.q);
+  return { pc: pcOf(c.root), minor, text: c.root + (minor ? 'm' : ''), guess: true };
+}
+
+/* ================= app state ================= */
+const PREF_KEY = 'chordbook.prefs.v1', LOCAL_KEY = 'chordbook.songs.v1';
+const S = {
+  songs: [], loaded: false, mode: 'local', db: null, col: null, uid: null, dl: null,
+  route: { name: 'library', id: null }, q: '', sort: 'recent',
+  view: { t: 0, capo: 0 }, draft: null, optsOpen: false, undo: [], dragMode: false, lines: [],
+  assets: null, sample: null, imgLimits: null, mediaNew: [], mediaTrash: [], scan: null, pick: null, tabAll: false, tabOpen: {},
+  prefs: { fs: 19, diagrams: true, acc: 'auto', vol: 80, speed: 3 }, standalone: false
+};
+const byId = id => S.songs.find(s => s.id === id);
+const curSong = () => S.route.id ? byId(S.route.id) : null;
+const newId = () => 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+function loadPrefs() { try { const p = JSON.parse(localStorage.getItem(PREF_KEY) || 'null'); if (p) Object.assign(S.prefs, p); } catch (e) {} }
+function savePrefs() { try { localStorage.setItem(PREF_KEY, JSON.stringify(S.prefs)); } catch (e) {} }
+function loadLocal() { try { const a = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); S.songs = Array.isArray(a) ? a : []; } catch (e) { S.songs = []; } S.mode = 'local'; }
+function persistLocal() { try { localStorage.setItem(LOCAL_KEY, JSON.stringify(S.songs)); } catch (e) { toast('บันทึกลงเบราว์เซอร์ไม่ได้ ลองสำรองข้อมูลไว้'); } }
+
+async function initStore() {
+  S.standalone = !(window.claude && window.claude.use);
+  try {
+    if (!S.standalone) {
+      const res = await Promise.race([
+        Promise.all(['db', 'user', 'downloads', 'assets', 'sample'].map(n => window.claude.use(n))),
+        new Promise(r => setTimeout(() => r(null), 5000))
+      ]);
+      if (res) {
+        const [db, user, dl, assets, sample] = res; S.dl = dl; S.assets = assets; S.sample = sample;
+        if (sample) { try { const lim = await sample.limits(); S.imgLimits = lim && lim.images || null; } catch (e) {} }
+        const uid = db && user ? await user.id() : null;
+        if (db && uid) {
+          S.db = db; S.uid = uid; S.col = db.collection('data/users/' + uid);
+          await new Promise(resolve => {
+            let first = true;
+            S.col.onSnapshot(snap => {
+              S.songs = snap.docs.map(d => ({ id: d.id, ...d.data() })); S.mode = 'db';
+              if (first) { first = false; resolve(); } else onSongsChanged();
+            }, err => {
+              if (first) { first = false; S.db = S.col = null; loadLocal(); resolve(); }
+              else toast('เชื่อมต่อที่เก็บข้อมูลไม่ได้ (' + (err && err.code) + ')');
+            });
+          });
+          return;
+        }
+      }
+    }
+  } catch (e) {}
+  loadLocal();
+  if (S.standalone) { GH.load(); if (GH.cfg) S.mode = 'github'; }
+}
+
+async function saveSong(song) {
+  song.updatedAt = Date.now();
+  const i = S.songs.findIndex(s => s.id === song.id);
+  if (i >= 0) S.songs[i] = song; else S.songs.push(song);
+  if (S.mode === 'db') { const { id, ...data } = song; await S.col.doc(id).set(data); }
+  else { persistLocal(); if (S.mode === 'github') GH.queue(song.id, song); }
+}
+async function patchSong(id, patch) {
+  const s = byId(id); if (!s) return;
+  Object.assign(s, patch);
+  try {
+    if (S.mode === 'db') await S.col.doc(id).update(patch);
+    else { persistLocal(); if (S.mode === 'github') GH.queue(id, s); }
+  } catch (e) { toast('บันทึกการเปลี่ยนแปลงไม่สำเร็จ'); }
+}
+async function removeSong(id) {
+  S.songs = S.songs.filter(s => s.id !== id);
+  if (S.mode === 'db') await S.col.doc(id).delete();
+  else { persistLocal(); if (S.mode === 'github') GH.queue(id, null); }
+}
+function onSongsChanged() {
+  if (S.route.name === 'library') renderList();
+  else if (S.route.name === 'song' && !curSong()) { S.route = { name: 'library', id: null }; renderView(); }
+}
+
+/* ================= image storage: Claude assets / IndexedDB / GitHub ================= */
+const hex32 = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
+function blobToBuf(blob) {
+  return blob.arrayBuffer ? blob.arrayBuffer() : new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsArrayBuffer(blob); });
+}
+const blobToDataUrl = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
+function dataUrlToBlob(du) {
+  const m = /^data:([^;,]+)?(;base64)?,([\s\S]*)$/.exec(du); if (!m) throw new Error('bad');
+  const bin = atob(m[3]), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  return new Blob([u], { type: m[1] || 'image/jpeg' });
+}
+async function blobToB64(blob) {
+  const by = new Uint8Array(await blobToBuf(blob)); let s = '';
+  for (let i = 0; i < by.length; i += 0x8000) s += String.fromCharCode.apply(null, by.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+const IDB = {
+  p: null,
+  open() { return this.p || (this.p = new Promise((res, rej) => { const r = indexedDB.open('chordbook', 1); r.onupgradeneeded = () => r.result.createObjectStore('img'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); })); },
+  async run(mode, fn) {
+    const db = await this.open();
+    return new Promise((res, rej) => { const t = db.transaction('img', mode), rq = fn(t.objectStore('img')); t.oncomplete = () => res(rq.result); t.onerror = t.onabort = () => rej(t.error); });
+  },
+  async get(id) { const v = await this.run('readonly', st => st.get(id)); return v ? new Blob([v.b], { type: v.t || 'image/jpeg' }) : null; },
+  async put(id, blob) { const b = await blobToBuf(blob); return this.run('readwrite', st => st.put({ t: blob.type, b }, id)); },
+  del(id) { return this.run('readwrite', st => st.delete(id)); }
+};
+const IMG = {
+  kind: 'none', cache: new Map(),
+  init() { this.kind = S.assets ? 'assets' : S.standalone ? (S.mode === 'github' ? 'github' : (window.indexedDB ? 'local' : 'none')) : 'none'; },
+  can() { return this.kind !== 'none'; },
+  async upload(blob) {
+    if (this.kind === 'assets') return (await S.assets.upload(blob)).id;
+    const id = hex32(); await IDB.put(id, blob);
+    if (this.kind === 'github') { try { await GH.putFile('media/' + id + '.jpg', blob); } catch (e) { IDB.del(id).catch(() => {}); throw e; } }
+    return id;
+  },
+  async remove(id) {
+    if (this.kind === 'assets') return S.assets.delete(id);
+    this.forget(id); await IDB.del(id).catch(() => {});
+    if (this.kind === 'github') await GH.deleteFile('media/' + id + '.jpg');
+  },
+  async blob(id) {
+    if (!S.standalone) { const r = await fetch('/_blob/' + id); if (!r.ok) throw new Error('img'); return r.blob(); }
+    let b = await IDB.get(id).catch(() => null);
+    if (!b && S.mode === 'github') { b = await GH.getFile('media/' + id + '.jpg'); if (b) IDB.put(id, b).catch(() => {}); }
+    return b;
+  },
+  async url(id) {
+    if (!S.standalone) return '/_blob/' + id;
+    if (this.cache.has(id)) return this.cache.get(id);
+    const b = await this.blob(id); if (!b) return null;
+    const u = URL.createObjectURL(b); this.cache.set(id, u); return u;
+  },
+  forget(id) { const u = this.cache.get(id); if (u) { URL.revokeObjectURL(u); this.cache.delete(id); } }
+};
+// every <img data-blob="id"> gets its real src here, whichever store the image lives in
+function hydrateImages() {
+  document.querySelectorAll('img[data-blob]:not([data-h])').forEach(im => {
+    im.dataset.h = '1';
+    const fail = () => im.dispatchEvent(new Event('error'));
+    IMG.url(im.dataset.blob).then(u => { if (u) im.src = u; else fail(); }, fail);
+  });
+}
+
+/* ================= GitHub storage (standalone build) ================= */
+const GH_KEY = 'chordbook.gh.v1', GH_PEND = 'chordbook.gh.pend.v1', VP_KEY = 'chordbook.viewprefs.v1';
+const validSong = x => x && typeof x === 'object' && typeof x.id === 'string' && typeof x.title === 'string';
+const cleanRemote = x => { const { transpose, ...r } = x; return JSON.parse(JSON.stringify(r)); };
+const b64enc = str => { const by = new TextEncoder().encode(str); let s = ''; for (let i = 0; i < by.length; i += 0x8000) s += String.fromCharCode.apply(null, by.subarray(i, i + 0x8000)); return btoa(s); };
+const b64dec = b => new TextDecoder().decode(Uint8Array.from(atob(String(b).replace(/\s/g, '')), c => c.charCodeAt(0)));
+const ghError = async r => { let m = ''; try { m = (await r.json()).message || ''; } catch (e) {} const e = new Error(m || ('HTTP ' + r.status)); e.status = r.status; return e; };
+function applyOps(list, ops) { const m = new Map(list.map(x => [x.id, x])); for (const [id, v] of ops) { if (v) m.set(id, v); else m.delete(id); } return [...m.values()]; }
+const vpAll = () => { try { return JSON.parse(localStorage.getItem(VP_KEY) || '{}') || {}; } catch (e) { return {}; } };
+const vpGet = id => vpAll()[id] || null;
+const vpSet = (id, v) => { const a = vpAll(); a[id] = v; try { localStorage.setItem(VP_KEY, JSON.stringify(a)); } catch (e) {} };
+
+const GH = {
+  cfg: null, sha: null, timer: null, busy: false, pend: new Map(), status: 'idle', err: '', last: 0,
+  load() {
+    try { const c = JSON.parse(localStorage.getItem(GH_KEY) || 'null'); if (c && c.repo && c.token) this.cfg = c; } catch (e) {}
+    try { this.pend = new Map(JSON.parse(localStorage.getItem(GH_PEND) || '[]')); } catch (e) {}
+  },
+  saveCfg() { try { if (this.cfg) localStorage.setItem(GH_KEY, JSON.stringify(this.cfg)); else localStorage.removeItem(GH_KEY); } catch (e) {} },
+  savePend() { try { localStorage.setItem(GH_PEND, JSON.stringify([...this.pend])); } catch (e) {} },
+  url(path) { return `https://api.github.com/repos/${this.cfg.repo}/contents/${path}`; },
+  ref() { return this.cfg.branch ? '?ref=' + encodeURIComponent(this.cfg.branch) : ''; },
+  br() { return this.cfg.branch ? { branch: this.cfg.branch } : {}; },
+  req(url, opt = {}, cfg = this.cfg) {
+    return fetch(url, { cache: 'no-store', ...opt, headers: { Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(opt.headers || {}) } });
+  },
+  async readRemote() {
+    const url = this.url('songs.json') + this.ref();
+    const r = await this.req(url);
+    if (r.status === 404) return { songs: [], sha: null };
+    if (!r.ok) throw await ghError(r);
+    const j = await r.json(); let text;
+    if (j.encoding === 'base64' && j.content) text = b64dec(j.content);
+    else { const r2 = await this.req(url, { headers: { Accept: 'application/vnd.github.raw+json' } }); if (!r2.ok) throw await ghError(r2); text = await r2.text(); }
+    let data; try { data = JSON.parse(text); } catch (e) { throw new Error('songs.json ในรีโปอ่านไม่ได้ (ไม่ใช่ JSON)'); }
+    const list = Array.isArray(data) ? data : (data && data.songs) || [];
+    return { songs: list.filter(validSong), sha: j.sha };
+  },
+  async writeRemote(songs, sha, message) {
+    const body = { message, content: b64enc(JSON.stringify({ app: 'chordbook', version: 1, songs }, null, 1)), ...this.br() };
+    if (sha) body.sha = sha;
+    const r = await this.req(this.url('songs.json'), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!r.ok) throw await ghError(r);
+    return (await r.json()).content.sha;
+  },
+  async putFile(path, blob) {
+    const r = await this.req(this.url(path), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'Add ' + path, content: await blobToB64(blob), ...this.br() }) });
+    if (r.status === 422) return;  // file already exists
+    if (!r.ok) throw await ghError(r);
+  },
+  async getFile(path) {
+    const r = await this.req(this.url(path) + this.ref(), { headers: { Accept: 'application/vnd.github.raw+json' } });
+    if (r.status === 404) return null;
+    if (!r.ok) throw await ghError(r);
+    return new Blob([await r.blob()], { type: 'image/jpeg' });
+  },
+  async deleteFile(path) {
+    const g = await this.req(this.url(path) + this.ref());
+    if (g.status === 404) return;
+    if (!g.ok) throw await ghError(g);
+    const r = await this.req(this.url(path), { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'Remove ' + path, sha: (await g.json()).sha, ...this.br() }) });
+    if (!r.ok && r.status !== 404) throw await ghError(r);
+  },
+  setStatus(st, err) { this.status = st; this.err = err || ''; renderSyncStat(); if (st === 'error') toast('ซิงก์กับ GitHub ไม่สำเร็จ: ' + this.err); },
+  queue(id, song) {
+    this.pend.set(id, song ? cleanRemote(song) : null); this.savePend();
+    this.setStatus('dirty'); clearTimeout(this.timer); this.timer = setTimeout(() => this.flush(), 2000);
+  },
+  adopt(remote) { S.songs = applyOps(remote, this.pend); persistLocal(); if (S.loaded) onSongsChanged(); },
+  async flush() {
+    clearTimeout(this.timer);
+    if (!this.cfg || !this.pend.size) return;
+    if (this.busy) { this.timer = setTimeout(() => this.flush(), 1500); return; }
+    this.busy = true; this.setStatus('syncing');
+    const ops = new Map(this.pend);
+    try {
+      let ok = false, next = null;
+      for (let a = 0; a < 3 && !ok; a++) {
+        const { songs, sha } = await this.readRemote();
+        next = applyOps(songs, ops);
+        try { this.sha = await this.writeRemote(next, sha, `Update songs (${ops.size})`); ok = true; }
+        catch (e) { if (e.status !== 409 && e.status !== 422) throw e; }
+      }
+      if (!ok) throw new Error('มีการแก้ไขชนกัน ลองซิงก์ใหม่อีกครั้ง');
+      for (const [id, v] of ops) if (this.pend.get(id) === v) this.pend.delete(id);
+      this.savePend(); this.last = Date.now(); this.adopt(next);
+      this.setStatus(this.pend.size ? 'dirty' : 'ok');
+      if (this.pend.size) this.timer = setTimeout(() => this.flush(), 1000);
+    } catch (e) { this.setStatus('error', e.message); }
+    finally { this.busy = false; }
+  },
+  async pull() {
+    if (!this.cfg || this.busy) return;
+    this.busy = true; this.setStatus('syncing');
+    try {
+      const { songs, sha } = await this.readRemote(); this.sha = sha; this.last = Date.now();
+      this.adopt(songs); this.setStatus(this.pend.size ? 'dirty' : 'ok');
+      if (this.pend.size) this.timer = setTimeout(() => this.flush(), 300);
+    } catch (e) { this.setStatus('error', e.message); }
+    finally { this.busy = false; }
+  }
+};
+function renderSyncStat() {
+  const el = $('#syncStat'); if (!el) return;
+  if (S.mode !== 'github') { el.innerHTML = ''; return; }
+  const time = GH.last ? ' เมื่อ ' + new Date(GH.last).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : '';
+  const t = { idle: 'พร้อมซิงก์', dirty: 'มีการแก้ไขรอซิงก์…', syncing: 'กำลังซิงก์กับ GitHub…', ok: 'ซิงก์กับ GitHub แล้ว' + time, error: 'ซิงก์ไม่สำเร็จ: ' + GH.err }[GH.status];
+  el.innerHTML = esc(t) + ' <button class="btn slim" data-a="ghsync">ซิงก์เดี๋ยวนี้</button>';
+}
+function openGh() {
+  const c = GH.cfg || {};
+  modal(`<h2>เชื่อมต่อ GitHub</h2>
+    <p style="margin-bottom:4px">เก็บเพลงและรูปในรีโป GitHub ส่วนตัวของคุณ เปิดใช้ได้จากทุกเครื่องผ่านอินเทอร์เน็ต</p>
+    <ol class="steps">
+      <li>สร้างรีโปแบบ <b>Private</b> เช่น <code>chordbook-data</code> และติ๊ก “Add a README file”</li>
+      <li>สร้าง Fine-grained token ที่ <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">github.com/settings/personal-access-tokens/new</a> เลือก “Only select repositories” แล้วเลือกรีโปนั้น ตั้ง Permissions → Contents เป็น “Read and write”</li>
+      <li>กรอกข้อมูลด้านล่าง</li>
+    </ol>
+    <div class="ghform">
+      <div class="field"><label for="gh_repo">รีโป (เจ้าของ/ชื่อรีโป)</label><input id="gh_repo" type="text" value="${esc(c.repo || '')}" placeholder="yourname/chordbook-data" autocomplete="off" autocapitalize="off"></div>
+      <div class="field"><label for="gh_branch">Branch (เว้นว่างถ้าใช้ค่าเริ่มต้น)</label><input id="gh_branch" type="text" value="${esc(c.branch || '')}" placeholder="main" autocomplete="off" autocapitalize="off"></div>
+      <div class="field"><label for="gh_token">Token</label><input id="gh_token" type="password" value="${esc(c.token || '')}" placeholder="github_pat_…" autocomplete="off"></div>
+    </div>
+    <p class="hint">token เก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น จึงควรจำกัดสิทธิ์ให้แค่รีโปนี้ และต้องกรอกอีกครั้งเมื่อใช้เครื่องอื่น</p>
+    <div class="err" id="ghErr" role="alert"></div>
+    <div class="acts">${GH.cfg ? '<button class="btn danger" data-a="ghoff">ตัดการเชื่อมต่อ</button>' : ''}<button class="btn" data-a="mclose">ปิด</button><button class="btn primary" data-a="ghconnect">ทดสอบและเชื่อมต่อ</button></div>`);
+}
+async function pushLocalImages(song) {
+  for (const id of [song.cover, ...(song.media || []).map(m => m.id)].filter(Boolean)) {
+    try { const b = await IDB.get(id); if (b) await GH.putFile('media/' + id + '.jpg', b); } catch (e) {}
+  }
+}
+async function ghConnect() {
+  const err = $('#ghErr'), say = m => { err.textContent = m; };
+  const repo = $('#gh_repo').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/+$/, '');
+  const branch = $('#gh_branch').value.trim(), token = $('#gh_token').value.trim();
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return say('พิมพ์รีโปเป็นรูปแบบ เจ้าของ/ชื่อรีโป เช่น somchai/chordbook-data');
+  if (!token) return say('ใส่ token ก่อน');
+  say('กำลังตรวจสอบ…');
+  const cfg = { repo, branch, token }, prevMode = S.mode, prevCfg = GH.cfg;
+  try {
+    const r = await GH.req(`https://api.github.com/repos/${repo}`, {}, cfg);
+    if (r.status === 401) return say('token ไม่ถูกต้องหรือหมดอายุ');
+    if (r.status === 403) return say('token ไม่มีสิทธิ์ หรือเรียกใช้ถี่เกินไป ลองใหม่อีกครั้ง');
+    if (r.status === 404) return say('ไม่พบรีโปนี้ หรือ token ไม่ได้ถูกเลือกให้เข้าถึงรีโปนี้');
+    if (!r.ok) return say('เชื่อมต่อไม่สำเร็จ (HTTP ' + r.status + ')');
+    const info = await r.json();
+    if (!info.private) return say('รีโปนี้เป็น Public ทุกคนจะเห็นเพลงของคุณ ให้ตั้งเป็น Private ก่อนแล้วลองใหม่');
+    if (info.permissions && info.permissions.push === false) return say('token นี้เขียนรีโปไม่ได้ ให้ตั้ง Contents เป็น “Read and write”');
+    GH.cfg = cfg; S.mode = 'github'; IMG.init();
+    const local = S.songs.slice(), { songs: remote, sha } = await GH.readRemote(); GH.sha = sha;
+    const rm = new Map(remote.map(x => [x.id, x])); let up = 0;
+    for (const x of local) {
+      const o = rm.get(x.id);
+      if (!o || (x.updatedAt || 0) > (o.updatedAt || 0)) { up++; if (prevMode !== 'github') await pushLocalImages(x); GH.pend.set(x.id, cleanRemote(x)); }
+    }
+    GH.saveCfg(); GH.savePend(); GH.adopt(remote);
+    closeModal(); renderView();
+    toast(up ? `เชื่อมต่อแล้ว กำลังอัปโหลด ${up} เพลงขึ้น GitHub` : 'เชื่อมต่อ GitHub แล้ว');
+    GH.last = Date.now(); if (GH.pend.size) GH.flush(); else GH.setStatus('ok');
+  } catch (e) {
+    GH.cfg = prevCfg; S.mode = prevMode; IMG.init();
+    say('เชื่อมต่อไม่สำเร็จ: ' + e.message);
+  }
+}
+function ghDisconnect() {
+  GH.cfg = null; GH.saveCfg(); GH.pend.clear(); GH.savePend(); clearTimeout(GH.timer);
+  S.mode = 'local'; IMG.init(); closeModal(); renderView(); toast('ตัดการเชื่อมต่อแล้ว เพลงที่โหลดไว้ยังอยู่ในเครื่องนี้');
+}
+
+/* ================= auto scroll ================= */
+const AS_NAME = ['ช้ามาก', 'ช้า', 'ปานกลาง', 'เร็ว', 'เร็วมาก'], AS_PX = [14, 28, 46, 70, 105];
+const AS = { on: false, raf: 0, last: 0, acc: 0, hold: 0, touching: false, lock: null };
+const asAtEnd = () => { const el = document.scrollingElement || document.documentElement; return Math.ceil(el.scrollTop + window.innerHeight) >= el.scrollHeight - 1; };
+function asStep(t) {
+  if (!AS.on) return;
+  const dt = Math.min(64, t - AS.last) / 1000; AS.last = t;
+  if (!AS.touching && !Drag.on && t >= AS.hold) {
+    AS.acc += AS_PX[S.prefs.speed - 1] * (S.prefs.fs / 19) * dt;
+    const px = Math.floor(AS.acc);
+    if (px >= 1) { window.scrollBy(0, px); AS.acc -= px; }
+    if (asAtEnd()) { asStop(); toast('ถึงท้ายเพลงแล้ว'); return; }
+  }
+  AS.raf = requestAnimationFrame(asStep);
+}
+function asStart() {
+  if (S.route.name !== 'song') return;
+  if (asAtEnd()) { toast('เพลงนี้สั้นกว่าหน้าจอ ไม่ต้องเลื่อน'); return; }
+  AS.on = true; AS.acc = 0; AS.last = performance.now(); AS.hold = AS.last + 1500;
+  AS.raf = requestAnimationFrame(asStep);
+  try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(l => { AS.lock = l; if (!AS.on) l.release(); }).catch(() => {}); } catch (e) {}
+  renderAs();
+}
+function asStop() {
+  AS.on = false; cancelAnimationFrame(AS.raf);
+  if (AS.lock) { AS.lock.release().catch(() => {}); AS.lock = null; }
+  renderAs();
+}
+function renderAs() {
+  const bar = $('#asBar'); if (!bar) return;
+  bar.hidden = S.route.name !== 'song';
+  $('#asPlay').setAttribute('aria-label', AS.on ? 'หยุดเลื่อนอัตโนมัติ' : 'เริ่มเลื่อนอัตโนมัติ');
+  $('#asPlay').classList.toggle('run', AS.on);
+  $('#asIcon').innerHTML = AS.on ? '<rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/>' : '<path d="M8 5v14l11-7z" fill="currentColor"/>';
+  bar.querySelectorAll('[data-a="aspeed"]').forEach(b => { const on = +b.dataset.v === S.prefs.speed; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+}
+
+/* ================= UI helpers ================= */
+let toastT;
+function toast(msg) {
+  const el = $('#toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2600);
+}
+function modal(html, wide) { $('#modalRoot').innerHTML = `<div class="modal-back" data-a="mbg"><div class="modal${wide ? ' wide' : ''}" role="dialog" aria-modal="true">${html}</div></div>`; }
+function closeModal() {
+  $('#modalRoot').innerHTML = '';
+  if (S.scanCtl) { S.scanCtl.abort(); S.scanCtl = null; }
+  clearInterval(S.scanTimer);
+}
+
+/* ================= sheet rendering ================= */
+function flatsFor(key, off) {
+  if (S.prefs.acc === 'flat') return true;
+  if (S.prefs.acc === 'sharp') return false;
+  return key ? usesFlats(mod12(key.pc + off), key.minor) : false;
+}
+function keyName(key, off) {
+  if (off === 0 && S.prefs.acc === 'auto') return key.text;
+  return (flatsFor(key, off) ? FLAT : SHARP)[mod12(key.pc + off)] + (key.minor ? 'm' : '');
+}
+const MARK_SHOW = { '/': '|', '||': '‖' };
+function chordText(seg, shift, flats) {
+  if (seg.chord) return esc(fmtChord(seg.chord, shift, flats, S.prefs.acc === 'auto'));
+  if (seg.mark) return esc(MARK_SHOW[seg.mark] || seg.mark);
+  return '&#8203;';
+}
+function lineHtml(L, li, shift, flats) {
+  if (L.type === 'blank') return '<div class="gap"></div>';
+  if (!L.segs.some(sg => sg.chord || sg.mark)) return `<div class="ln plain" data-l="${li}"><span class="ly" data-s="0">${esc(L.segs.map(sg => sg.text).join('') || ' ')}</span></div>`;
+  return `<div class="ln" data-l="${li}">${L.segs.map((sg, si) =>
+    `<span class="sg"><span class="ch" data-s="${si}"${sg.chord || sg.mark ? ' data-k="1"' : ''}${sg.mark ? ' data-mk="1"' : ''}>${chordText(sg, shift, flats)}</span><span class="ly" data-s="${si}">${esc(sg.text) || '&#8203;'}</span></span>`).join('')}</div>`;
+}
+const mediaMap = arr => { const m = {}; for (const e of arr || []) (m[e.k] = m[e.k] || {})[e.t] = e.id; return m; };
+const isTabShown = k => (k in S.tabOpen ? S.tabOpen[k] : S.tabAll);
+function sheetHtml(lines, shift, flats, media) {
+  media = media || {};
+  const groups = []; let cur = { head: null, items: [] };
+  lines.forEach((L, li) => {
+    if (L.type === 'section') { if (cur.head || cur.items.length) groups.push(cur); cur = { head: L, items: [] }; }
+    else cur.items.push(li);
+  });
+  groups.push(cur);
+  return groups.map(g => {
+    const body = g.items.map(li => lineHtml(lines[li], li, shift, flats)).join('');
+    if (!g.head) return body ? `<div class="blk"><div class="blk-main"><div class="blk-lines">${body}</div></div></div>` : '';
+    const m = media[g.head.key] || {}, shown = !!(m.tab && isTabShown(g.head.key));
+    return `<section class="blk">
+      <div class="sec-row"><div class="sec">${esc(g.head.text)}</div>${m.tab ? `<button class="tabbtn${shown ? ' on' : ''}" data-a="tabtoggle" data-key="${esc(g.head.key)}" aria-pressed="${shown}">Tab</button>` : ''}</div>
+      ${shown ? `<figure class="tabimg"><img data-blob="${esc(m.tab)}" alt="Tab ${esc(g.head.text)}" data-a="zoom" data-id="${esc(m.tab)}"></figure>` : ''}
+      <div class="blk-main${m.strum ? ' has-strum' : ''}"><div class="blk-lines">${body}</div>
+      ${m.strum ? `<figure class="strumimg"><img data-blob="${esc(m.strum)}" alt="Strumming หรือ picking ของ ${esc(g.head.text)}" data-a="zoom" data-id="${esc(m.strum)}"><figcaption>Strumming / Picking</figcaption></figure>` : ''}</div>
+    </section>`;
+  }).join('');
+}
+function diagramsHtml(lines, shift, flats) {
+  const seen = new Set(), items = [];
+  for (const L of lines) if (L.segs) for (const s of L.segs) if (s.chord) {
+    const name = fmtChord(s.chord, shift, flats, false);
+    if (seen.has(name)) continue; seen.add(name);
+    const shape = chordShape(parseChord(name));
+    if (shape) items.push(`<figure class="dg">${diagramSvg(shape, name)}<figcaption>${esc(name)}</figcaption></figure>`);
+  }
+  return items.length ? `<div class="dgs" aria-label="ไดอะแกรมคอร์ดที่ใช้ในเพลง">${items.join('')}</div>` : '';
+}
+
+/* ================= views ================= */
+function songKeyText(s) {
+  const k = parseKey(s.key); if (k) return k.text;
+  const c = firstChord(parseSheet(s.body)); if (!c) return '';
+  return c.root + (/^(m(?!aj)|min)/.test(c.q) ? 'm' : '');
+}
+function viewLibrary() {
+  return `
+  <header class="top">
+    <div><h1>สมุดคอร์ด</h1><p class="sub">${S.songs.length ? S.songs.length + ' เพลงในสมุด' : 'เก็บคอร์ด เนื้อเพลง คีย์ และ tempo ของเพลงที่คุณชอบ'}</p></div>
+    <div class="acts"><button class="btn" data-a="backup">สำรองข้อมูล</button>${S.standalone ? `<button class="btn${S.mode === 'github' ? ' on' : ''}" data-a="gh">${S.mode === 'github' ? 'GitHub: เชื่อมต่อแล้ว' : 'เชื่อมต่อ GitHub'}</button>` : ''}${scanBtn('new', '', 'สแกนจากรูป')}<button class="btn primary" data-a="new">เพิ่มเพลง</button></div>
+  </header>
+  <div id="listWrap"></div>`;
+}
+function renderList() {
+  const wrap = $('#listWrap'); if (!wrap) return;
+  const has = S.songs.length > 0;
+  if (!has) {
+    wrap.innerHTML = `<div class="empty"><h2>ยังไม่มีเพลงในสมุด</h2><p>เพิ่มเพลงแรกของคุณ หรือดูตัวอย่างรูปแบบการพิมพ์คอร์ดก่อนก็ได้</p>
+      <div class="acts"><button class="btn primary" data-a="new">เพิ่มเพลงแรก</button>${scanBtn('new', '', 'สแกนจากรูป')}<button class="btn" data-a="sample">ดูตัวอย่างรูปแบบ</button></div></div>${footHtml()}`;
+    renderSyncStat(); return;
+  }
+  const q = S.q.trim().toLowerCase();
+  let list = S.songs.filter(s => !q || (s.title + ' ' + (s.artist || '')).toLowerCase().includes(q));
+  const cmp = { recent: (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0),
+    title: (a, b) => a.title.localeCompare(b.title, 'th'), artist: (a, b) => (a.artist || '').localeCompare(b.artist || '', 'th') }[S.sort];
+  list.sort(cmp);
+  const rows = list.map(s => `<li><button class="row" data-a="open" data-id="${esc(s.id)}">
+      ${s.cover ? `<span class="cover"><img data-blob="${esc(s.cover)}" alt=""></span>` : `<span class="keytile">${esc(songKeyText(s) || '–')}</span>`}
+      <span class="rmeta"><span class="rtitle">${esc(s.title)}</span><span class="rartist">${esc(s.artist || 'ไม่ระบุศิลปิน')}</span></span>
+      <span class="rtempo">${s.cover && songKeyText(s) ? `<span class="rkey">${esc(songKeyText(s))}</span>` : ''}${s.bpm ? `<b>${esc(s.bpm)}</b><small>BPM</small>` : ''}</span></button></li>`).join('');
+  wrap.innerHTML = `<div class="finder">
+      <input type="search" id="q" placeholder="ค้นหาชื่อเพลงหรือศิลปิน" value="${esc(S.q)}" aria-label="ค้นหาเพลง">
+      <select id="sortSel" aria-label="เรียงลำดับ">
+        <option value="recent"${S.sort === 'recent' ? ' selected' : ''}>เรียง: ล่าสุด</option>
+        <option value="title"${S.sort === 'title' ? ' selected' : ''}>เรียง: ชื่อเพลง</option>
+        <option value="artist"${S.sort === 'artist' ? ' selected' : ''}>เรียง: ศิลปิน</option></select></div>
+    ${list.length ? `<ul class="songs">${rows}</ul>` : `<div class="empty"><p>ไม่พบเพลงที่ตรงกับ “${esc(S.q)}”</p></div>`}${footHtml()}`;
+  const qi = $('#q'); if (qi && document.activeElement !== qi && S._refocusQ) { qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); }
+  S._refocusQ = false;
+  renderSyncStat();
+}
+const scanBtn = (mode, cls, label) => S.sample && S.imgLimits ? `<button class="btn${cls ? ' ' + cls : ''}" data-a="scan" data-mode="${mode}" type="button">${label}</button>` : '';
+function footHtml() {
+  const t = S.mode === 'db' ? 'เพลงถูกบันทึกในบัญชีของคุณ เปิดดูได้จากทุกอุปกรณ์ที่ล็อกอินบัญชีเดียวกัน'
+    : S.mode === 'github' ? `เพลงและรูปถูกเก็บในรีโป GitHub <b>${esc(GH.cfg.repo)}</b> และเก็บสำเนาไว้ในเครื่องนี้เพื่อเปิดได้เร็ว`
+    : S.standalone ? 'เพลงถูกบันทึกในเบราว์เซอร์เครื่องนี้เท่านั้น กด “เชื่อมต่อ GitHub” เพื่อเก็บออนไลน์และใช้ได้หลายเครื่อง หรือกด “สำรองข้อมูล” เก็บไว้เป็นระยะ'
+    : 'เพลงถูกบันทึกในเบราว์เซอร์เครื่องนี้เท่านั้น ควรกด “สำรองข้อมูล” เก็บไว้เป็นระยะ';
+  return `<p class="foot">${t}</p>${S.mode === 'github' ? '<p class="foot" id="syncStat"></p>' : ''}`;
+}
+
+function viewSong() {
+  const s = curSong(); if (!s) return '';
+  const chips = [s.bpm ? `${s.bpm} BPM` : '', s.bpm || s.beats ? `${s.beats === 6 ? '6/8' : (s.beats || 4) + '/4'}` : ''].filter(Boolean);
+  return `
+  <div class="bar"><button class="btn ghost" data-a="back">← เพลงทั้งหมด</button><button class="btn" data-a="edit">แก้ไข</button></div>
+  <header class="songhead">${s.cover ? `<img class="hcover" data-blob="${esc(s.cover)}" alt="รูปปก" data-a="zoom" data-id="${esc(s.cover)}">` : ''}<div><h1>${esc(s.title)}</h1>${s.artist ? `<p class="artist">${esc(s.artist)}</p>` : ''}
+  ${chips.length ? `<div class="chips">${chips.map(c => `<span>${esc(c)}</span>`).join('')}</div>` : ''}</div></header>
+  <div id="dyn"></div>`;
+}
+function renderDyn() {
+  const s = curSong(), dyn = $('#dyn'); if (!s || !dyn) return;
+  const { t, capo } = S.view, shift = t - capo;
+  const lines = parseSheet(s.body), key = effKey(s, lines), flats = flatsFor(key, shift);
+  S.lines = lines;
+  let info = '';
+  if (key) {
+    const orig = keyName(key, 0), snd = keyName(key, t);
+    info = `<div class="keyinfo"><span class="k">${t === 0 ? 'คีย์ ' + esc(orig) : 'คีย์ ' + esc(orig) + ' → ' + esc(snd)}${key.guess ? ' <small style="font-weight:400;color:var(--muted)">(เดาจากคอร์ดแรก)</small>' : ''}</span>
+      ${capo > 0 ? `<span class="c">คาโป้ช่อง ${capo}: กดรูปคอร์ดแบบคีย์ ${esc(keyName(key, shift))}</span>` : ''}</div>`;
+  } else if (capo > 0) info = `<div class="keyinfo"><span class="c">คาโป้ช่อง ${capo}: รูปคอร์ดที่แสดงคือรูปที่ต้องกด</span></div>`;
+  const acc = [['auto', 'อัตโนมัติ'], ['sharp', '♯ ชาร์ป'], ['flat', '♭ แฟลต']]
+    .map(([v, l]) => `<button data-a="acc" data-v="${v}" class="${S.prefs.acc === v ? 'on' : ''}" aria-pressed="${S.prefs.acc === v}">${l}</button>`).join('');
+  dyn.innerHTML = `
+  <div class="tools">
+    <div class="stepper" role="group" aria-label="เปลี่ยนคีย์">
+      <span class="lbl">เปลี่ยนคีย์</span>
+      <button class="sq" data-a="t-" aria-label="ลดครึ่งเสียง">−</button>
+      <span class="val" aria-live="polite">${t > 0 ? '+' + t : t}</span>
+      <button class="sq" data-a="t+" aria-label="เพิ่มครึ่งเสียง">+</button>
+    </div>
+    <div class="stepper" role="group" aria-label="คาโป้">
+      <span class="lbl">คาโป้</span>
+      <button class="sq" data-a="capo-" aria-label="ลดช่องคาโป้">−</button>
+      <span class="val" aria-live="polite">${capo}</span>
+      <button class="sq" data-a="capo+" aria-label="เพิ่มช่องคาโป้">+</button>
+    </div>
+    ${t || capo ? '<button class="btn slim" data-a="reset">รีเซ็ต</button>' : ''}
+    <button class="btn slim${S.dragMode ? ' on' : ''}" data-a="dragmode" aria-pressed="${S.dragMode}">ลากเพื่อย้ายคอร์ด</button>
+    ${S.dragMode ? `<button class="btn slim" data-a="undo"${S.undo.length ? '' : ' disabled'}>เลิกทำ</button>` : ''}
+  </div>
+  ${S.dragMode ? '<p class="hint">ลากคอร์ดไปวางตรงตัวอักษรที่ต้องการ ระบบบันทึกลงเพลงให้ทันที ปิดโหมดนี้เมื่อจะเลื่อนอ่านตามปกติบนมือถือ</p>' : ''}
+  ${info}
+  <details class="opts"${S.optsOpen ? ' open' : ''}><summary>ตัวเลือกการแสดงผล</summary>
+    <div class="optgrid">
+      <div><span class="lbl">รูปแบบ ♯/♭</span><span class="seg" role="group">${acc}</span></div>
+      <div><span class="lbl">ขนาดตัวอักษร</span><button class="sq" data-a="fs-" aria-label="ลดขนาดตัวอักษร" style="font-size:14px">A</button> <button class="sq" data-a="fs+" aria-label="เพิ่มขนาดตัวอักษร" style="font-size:22px">A</button></div>
+      <div><span class="seg" role="group"><button data-a="dg" class="${S.prefs.diagrams ? 'on' : ''}" aria-pressed="${S.prefs.diagrams}">แสดงไดอะแกรมคอร์ด</button></span></div>
+      ${(s.media || []).some(m => m.t === 'tab') ? `<div><span class="seg" role="group"><button data-a="tabsall" class="${S.tabAll ? 'on' : ''}" aria-pressed="${S.tabAll}">แสดง Tab ทุกส่วน</button></span></div>` : ''}
+    </div>
+  </details>
+  ${S.prefs.diagrams ? diagramsHtml(lines, shift, flats) : ''}
+  <article class="sheet${S.dragMode ? ' drag-on' : ''}" style="--fs:${S.prefs.fs}px">${sheetHtml(lines, shift, flats, mediaMap(s.media)) || '<p class="ln plain" style="color:var(--muted)">ยังไม่มีเนื้อเพลง กด “แก้ไข” เพื่อเพิ่มคอร์ดและเนื้อร้อง</p>'}</article>`;
+}
+
+const SAMPLE = {
+  title: 'Amazing Grace', artist: 'John Newton (เพลงสาธารณสมบัติ)', key: 'G', bpm: 72, beats: 3, capo: 0,
+  body: `# Intro
+G  /  C  /  D  /  G
+
+# Verse 1
+[G]Amazing [G7]grace, how [C]sweet the [G]sound
+[G]That saved a [Em]wretch like [D]me
+[G]I once was [G7]lost, but [C]now am [G]found
+Was [Em]blind but [D]now I [G]see
+
+# Verse 2
+[G]'Twas grace that [G7]taught my [C]heart to [G]fear
+And [Em]grace my [D]fears re[G]lieved
+How [G]precious [G7]did that [C]grace ap[G]pear
+The [Em]hour I [D]first be[G]lieved`
+};
+function viewEdit() {
+  const d = S.draft, isNew = !S.route.id;
+  const beatsOpts = [[2, '2/4'], [3, '3/4'], [4, '4/4'], [5, '5/4'], [6, '6/8']]
+    .map(([v, l]) => `<option value="${v}"${Number(d.beats) === v ? ' selected' : ''}>${l}</option>`).join('');
+  return `
+  <div class="bar"><button class="btn ghost" data-a="cancel">← ยกเลิก</button>
+    <div class="acts">${!isNew ? '<button class="btn danger" data-a="del">ลบเพลง</button>' : ''}<button class="btn primary" data-a="save">บันทึก</button></div></div>
+  <h1 class="edtitle">${isNew ? 'เพิ่มเพลงใหม่' : 'แก้ไขเพลง'}</h1>
+  <div class="editor">
+    ${scanBanner()}
+    <div id="coverField">${coverFieldHtml()}</div>
+    <div class="grid2">
+      <div class="field"><label for="f_title">ชื่อเพลง</label><input id="f_title" type="text" value="${esc(d.title)}" autocomplete="off"></div>
+      <div class="field"><label for="f_artist">ศิลปิน</label><input id="f_artist" type="text" value="${esc(d.artist)}" autocomplete="off"></div>
+    </div>
+    <div class="grid4">
+      <div class="field"><label for="f_key">คีย์ต้นฉบับ</label><input id="f_key" type="text" value="${esc(d.key)}" placeholder="เช่น G, Am, Bb" autocomplete="off"></div>
+      <div class="field"><label for="f_bpm">BPM</label><input id="f_bpm" type="number" inputmode="numeric" min="30" max="240" value="${esc(d.bpm || '')}" placeholder="เช่น 96"></div>
+      <div class="field"><label for="f_beats">อัตราจังหวะ</label><select id="f_beats">${beatsOpts}</select></div>
+      <div class="field"><label for="f_capo">คาโป้เริ่มต้น</label><input id="f_capo" type="number" inputmode="numeric" min="0" max="11" value="${esc(d.capo || 0)}"></div>
+    </div>
+    <p class="hint" style="margin:-8px 0 0">คีย์คือคีย์ของคอร์ดที่คุณพิมพ์ไว้ ถ้าเว้นว่างระบบจะเดาจากคอร์ดแรก</p>
+    <div class="err" id="formErr" role="alert"></div>
+    <div class="split">
+      <div class="field">
+        <span class="flabel">คอร์ดและเนื้อเพลง</span>
+        <div class="tb"><button class="btn slim" data-a="ins-chord" type="button">แทรก [คอร์ด]</button><button class="btn slim" data-a="ins-bar" type="button">แทรกเส้นห้อง [/]</button><button class="btn slim" data-a="ins-sec" type="button">แทรกหัวข้อ</button>${scanBtn('draft', 'slim', 'นำเข้าจากรูป')}</div>
+        <textarea id="f_body" spellcheck="false" aria-label="คอร์ดและเนื้อเพลง">${esc(d.body)}</textarea>
+        <details class="help"><summary>วิธีพิมพ์คอร์ด</summary>
+          <p>พิมพ์คอร์ดในวงเล็บเหลี่ยมตรงพยางค์ที่ต้องเปลี่ยนคอร์ด หรือจะพิมพ์บรรทัดคอร์ดไว้เหนือบรรทัดเนื้อร้อง แล้วเว้นวรรคให้ตรงตำแหน่งก็ได้ ระบบรองรับทั้งสองแบบ</p>
+<pre># Verse 1
+[G]เนื้อ[C]เพลง[D]ตรงนี้
+
+# Chorus
+G        C
+เนื้อเพลงบรรทัดถัดไป</pre>
+          <p>บรรทัดที่ขึ้นต้นด้วย # หรืออยู่ใน [ ] ที่ไม่ใช่คอร์ด จะเป็นหัวข้อ เช่น Verse หรือ Chorus</p>
+          <p>ใช้ / คั่นห้อง เช่น <code>G  /  C  /  D</code> ในบรรทัดคอร์ด หรือ <code>[/]</code> ในบรรทัดแบบ [คอร์ด] (เครื่องหมาย | ก็ใช้ได้) ระบบจะแสดงเป็นเส้นคั่นห้อง</p></details>
+      </div>
+      <div class="field">
+        <div class="pvhead"><span class="flabel" style="margin:0">ตัวอย่างที่จะเห็น</span><button class="btn slim" data-a="undo" id="undoBtn" disabled>เลิกทำการลาก</button></div>
+        <article class="sheet preview drag-on" id="prev" style="--fs:16px"></article>
+        <p class="hint">ลากคอร์ดในตัวอย่างเพื่อย้ายตำแหน่งได้ ข้อความทางซ้ายจะอัปเดตให้ (บรรทัดที่ลากจะถูกเขียนเป็นแบบ [คอร์ด])</p>
+      </div>
+    </div>
+    <div class="mediaPanel" id="mediaPanel"></div>
+  </div>`;
+}
+function updatePreview() {
+  const p = $('#prev'); if (!p) return;
+  const lines = parseSheet(S.draft.body), key = effKey({ key: S.draft.key }, lines);
+  S.lines = lines;
+  const ub = $('#undoBtn'); if (ub) ub.disabled = !S.undo.length;
+  p.innerHTML = sheetHtml(lines, 0, flatsFor(key, 0), mediaMap(S.draft.media)) || '<p class="ln plain" style="color:var(--muted)">พิมพ์ทางซ้ายแล้วตัวอย่างจะขึ้นที่นี่</p>';
+  renderMediaPanel();
+}
+
+function renderView() {
+  const v = $('#view');
+  if (!S.loaded) { v.innerHTML = '<p class="loading">กำลังเปิดสมุดคอร์ด…</p>'; return; }
+  if (S.route.name !== 'edit') S.scan = null;
+  if (S.route.name !== 'song' && AS.on) asStop();
+  if (S.route.name === 'song') { v.innerHTML = viewSong(); renderDyn(); }
+  else if (S.route.name === 'edit') { S._panelSig = null; v.innerHTML = viewEdit(); updatePreview(); }
+  else { v.innerHTML = viewLibrary(); renderList(); }
+  renderSongTempoRow(); renderAs();
+}
+
+/* ================= navigation & actions ================= */
+function openSong(id) {
+  const s = byId(id); if (!s) return;
+  S.route = { name: 'song', id };
+  const vp = S.mode === 'github' ? vpGet(id) : null;
+  S.view = { t: vp ? vp.t : s.transpose || 0, capo: vp ? vp.capo : s.capo || 0 }; S.undo = []; S.dragMode = false; S.tabAll = false; S.tabOpen = {}; asStop();
+  if (s.bpm) Metro.setBpm(s.bpm);
+  if (s.beats) Metro.setBeats(s.beats);
+  renderView(); window.scrollTo(0, 0);
+}
+function openEditor(id, preset, scan) {
+  const s = id ? byId(id) : null;
+  const base = s || preset || { title: '', artist: '', key: '', bpm: '', beats: 4, capo: 0, body: '' };
+  S.draft = { title: base.title, artist: base.artist || '', key: base.key || '', bpm: base.bpm || '', beats: base.beats || 4, capo: base.capo || 0, body: base.body || '', cover: base.cover || '',
+    media: (base.media || []).map(e => ({ k: e.k, t: e.t, id: e.id })) };
+  S.route = { name: 'edit', id: id || null }; S.undo = []; S.mediaNew = []; S.mediaTrash = []; S._panelSig = null;
+  S.scan = scan || null;
+  renderView(); window.scrollTo(0, 0);
+}
+let patchT;
+function queuePatch() {
+  clearTimeout(patchT);
+  patchT = setTimeout(flushPatch, 900);
+}
+function flushPatch() {
+  clearTimeout(patchT);
+  const s = curSong(); if (!s || S.route.name !== 'song') return;
+  if (S.mode === 'github') { vpSet(s.id, { t: S.view.t, capo: S.view.capo }); return; }
+  if ((s.transpose || 0) === S.view.t && (s.capo || 0) === S.view.capo) return;
+  patchSong(s.id, { transpose: S.view.t, capo: S.view.capo });
+}
+async function saveDraft() {
+  const d = S.draft, err = $('#formErr'), fail = (m, f) => { err.textContent = m; if (f) $(f).focus(); };
+  const title = d.title.trim();
+  if (!title) return fail('ใส่ชื่อเพลงก่อนบันทึก', '#f_title');
+  let key = '';
+  if (d.key.trim()) { const k = parseKey(d.key); if (!k) return fail('คีย์ไม่ถูกต้อง ลองพิมพ์แบบ G, Am, Bb หรือ F#m', '#f_key'); key = k.text; }
+  const bpm = d.bpm === '' || d.bpm == null ? 0 : Math.round(Number(d.bpm));
+  if (bpm && (bpm < 30 || bpm > 240)) return fail('BPM ต้องอยู่ระหว่าง 30 ถึง 240', '#f_bpm');
+  const ex = S.route.id ? byId(S.route.id) : null;
+  const song = {
+    id: ex ? ex.id : newId(), title, artist: d.artist.trim(), key, bpm, beats: Number(d.beats) || 4,
+    capo: Math.min(11, Math.max(0, Math.round(Number(d.capo)) || 0)), transpose: ex ? (ex.transpose || 0) : 0,
+    body: d.body.replace(/\s+$/, ''), createdAt: ex ? (ex.createdAt || Date.now()) : Date.now(),
+    media: d.media.map(e => ({ k: e.k, t: e.t, id: e.id })), cover: d.cover || ''
+  };
+  try { await saveSong(song); } catch (e) { return fail('บันทึกไม่สำเร็จ ลองอีกครั้ง'); }
+  dropAssets(S.mediaTrash.filter(id => id !== song.cover && !song.media.some(e => e.id === id))); S.mediaNew = []; S.mediaTrash = [];
+  openSong(song.id); toast('บันทึกแล้ว');
+}
+function confirmDelete() {
+  const s = curSong(); if (!s) return;
+  modal(`<h2>ลบเพลงนี้?</h2><p>“${esc(s.title)}” จะถูกลบถาวร กู้คืนไม่ได้</p>
+    <div class="acts"><button class="btn" data-a="mclose">ยกเลิก</button><button class="btn danger" data-a="delok">ลบเพลง</button></div>`);
+}
+async function doDelete() {
+  const s = curSong(); closeModal(); if (!s) return;
+  try { await removeSong(s.id); } catch (e) { toast('ลบไม่สำเร็จ ลองอีกครั้ง'); return; }
+  dropAssets([s.cover, ...(s.media || []).map(e => e.id)].filter(Boolean));
+  S.route = { name: 'library', id: null }; renderView(); toast('ลบเพลงแล้ว');
+}
+function insertAtCursor(text, back) {
+  const ta = $('#f_body'); if (!ta) return;
+  const a = ta.selectionStart, b = ta.selectionEnd;
+  ta.setRangeText(text, a, b, 'end');
+  const pos = ta.selectionStart - (back || 0);
+  ta.focus(); ta.setSelectionRange(pos, pos);
+  S.draft.body = ta.value; updatePreview();
+}
+
+/* ---------- backup ---------- */
+async function backupJson() {
+  const data = { app: 'chordbook', version: 2, songs: S.songs.map(x => ({ ...x })), images: {} }, ids = new Set();
+  for (const x of S.songs) { if (x.cover) ids.add(x.cover); for (const m of x.media || []) ids.add(m.id); }
+  for (const id of ids) { try { const b = await IMG.blob(id); if (b) data.images[id] = await blobToDataUrl(b); } catch (e) {} }
+  return JSON.stringify(data, null, 1);
+}
+function downloadText(name, text) {
+  const u = URL.createObjectURL(new Blob([text], { type: 'application/json' })), a = document.createElement('a');
+  a.href = u; a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+}
+function openBackup() {
+  modal(`<h2>สำรองและนำเข้าข้อมูล</h2>
+    <p>ไฟล์สำรองเป็น JSON เก็บเพลงทั้งหมดพร้อมรูป ใช้ย้ายไปอุปกรณ์อื่น ย้ายจากเวอร์ชันหนึ่งไปอีกเวอร์ชัน หรือกู้คืนภายหลังได้</p>
+    <div class="acts" style="justify-content:flex-start"><button class="btn primary" data-a="export">บันทึกไฟล์สำรอง</button>
+      <button class="btn" data-a="import">นำเข้าจากไฟล์</button></div>
+    <input type="file" id="impFile" accept="application/json,.json" hidden>
+    <div id="expBox"></div>
+    <div class="acts"><button class="btn" data-a="mclose">ปิด</button></div>`);
+}
+async function doExport() {
+  const box = $('#expBox'); if (box) box.innerHTML = '<p class="hint" style="margin-top:12px">กำลังรวมเพลงและรูป…</p>';
+  const json = await backupJson();
+  if (S.dl) {
+    try { await S.dl.save({ filename: 'chordbook-backup.json', data: json }); if (box) box.innerHTML = ''; return; }
+    catch (e) { if (e && e.code === 'declined') { if (box) box.innerHTML = ''; return; } }
+  } else if (S.standalone) { downloadText('chordbook-backup.json', json); if (box) box.innerHTML = ''; return; }
+  if (box) box.innerHTML = `<p style="margin-top:14px">บันทึกเป็นไฟล์ไม่ได้ในหน้านี้ คัดลอกข้อความด้านล่างไปเก็บไว้ได้เลย</p><textarea readonly id="expTa"></textarea>`;
+  const ta = $('#expTa'); if (ta) { ta.value = json; ta.focus(); ta.select(); }
+}
+async function doImport(file) {
+  try {
+    const data = JSON.parse(await file.text());
+    const arr = Array.isArray(data) ? data : data.songs;
+    if (!Array.isArray(arr)) throw new Error('bad');
+    const imgs = !Array.isArray(data) && data.images && typeof data.images === 'object' ? data.images : null, idMap = {};
+    const mapId = async id => {
+      if (!/^[0-9a-f]{32}$/.test(id || '')) return '';
+      if (!imgs) return id;
+      if (id in idMap) return idMap[id];
+      let nid = '';
+      if (imgs[id] && IMG.can()) { try { nid = await IMG.upload(dataUrlToBlob(imgs[id])); } catch (e) {} }
+      return (idMap[id] = nid);
+    };
+    let n = 0;
+    for (const x of arr) {
+      if (!x || typeof x.title !== 'string' || !x.title.trim()) continue;
+      const key = parseKey(x.key), media = [];
+      for (const e of (Array.isArray(x.media) ? x.media.slice(0, 40) : [])) {
+        if (e && typeof e.k === 'string' && ['strum', 'tab'].includes(e.t)) { const id = await mapId(e.id); if (id) media.push({ k: e.k.slice(0, 200), t: e.t, id }); }
+      }
+      await saveSong({
+        id: typeof x.id === 'string' && /^[A-Za-z0-9_-]{1,100}$/.test(x.id) ? x.id : newId(),
+        title: x.title.trim().slice(0, 200), artist: String(x.artist || '').slice(0, 200), key: key ? key.text : '',
+        bpm: Math.min(240, Math.max(0, Math.round(Number(x.bpm)) || 0)), beats: [2,3,4,5,6].includes(Number(x.beats)) ? Number(x.beats) : 4,
+        capo: Math.min(11, Math.max(0, Math.round(Number(x.capo)) || 0)), transpose: 0,
+        body: String(x.body || '').slice(0, 60000), createdAt: Number(x.createdAt) || Date.now(),
+        media, cover: await mapId(x.cover)
+      });
+      n++;
+    }
+    closeModal(); renderView(); toast(`นำเข้า ${n} เพลงแล้ว`);
+  } catch (e) { toast('อ่านไฟล์ไม่ได้ ตรวจว่าเป็นไฟล์สำรองจากสมุดคอร์ด'); }
+}
+
+/* ================= metronome ================= */
+const Metro = {
+  ctx: null, playing: false, bpm: 100, beats: 4, vol: .8, beat: 0, next: 0, timer: null, taps: [],
+  ensure() {
+    if (!this.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false; this.ctx = new AC(); }
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    return true;
+  },
+  start() {
+    if (!this.ensure()) { toast('เบราว์เซอร์นี้เล่นเสียงเมโทรนอมไม่ได้'); return; }
+    this.playing = true; this.beat = 0; this.next = this.ctx.currentTime + .08;
+    this.timer = setInterval(() => this.tick(), 25); this.tick(); this.ui();
+  },
+  stop() { clearInterval(this.timer); this.playing = false; this.lampOn(-1); this.ui(); },
+  tick() {
+    while (this.next < this.ctx.currentTime + .12) {
+      const b = this.beat, when = this.next;
+      this.click(when, b);
+      setTimeout(() => { if (this.playing) this.lampOn(b); }, Math.max(0, (when - this.ctx.currentTime) * 1000));
+      this.next += 60 / this.bpm; this.beat = (this.beat + 1) % this.beats;
+    }
+  },
+  click(t, b) {
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = 'square'; o.frequency.value = b === 0 ? 1568 : 1046;
+    const v = Math.max(.0001, this.vol * this.vol * .45);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .002); g.gain.exponentialRampToValueAtTime(.0001, t + .055);
+    o.connect(g); g.connect(this.ctx.destination); o.start(t); o.stop(t + .07);
+  },
+  setBpm(v) {
+    this.bpm = Math.min(240, Math.max(30, Math.round(Number(v) || this.bpm)));
+    $('#bpmIn').value = this.bpm; $('#bpmRange').value = this.bpm;
+  },
+  setBeats(n) {
+    this.beats = n; if (this.beat >= n) this.beat = 0;
+    $('#beatsSel').value = String(n); this.buildLamps();
+  },
+  tap() {
+    const now = performance.now();
+    if (this.taps.length && now - this.taps[this.taps.length - 1] > 2000) this.taps = [];
+    this.taps.push(now); if (this.taps.length > 6) this.taps.shift();
+    if (this.taps.length > 1) this.setBpm(60000 / ((this.taps[this.taps.length - 1] - this.taps[0]) / (this.taps.length - 1)));
+  },
+  buildLamps() {
+    $('#lamps').innerHTML = Array.from({ length: this.beats }, (_, i) => `<span class="lamp${i === 0 ? ' first' : ''}"></span>`).join('');
+  },
+  lampOn(i) { document.querySelectorAll('#lamps .lamp').forEach((el, k) => el.classList.toggle('on', k === i)); },
+  ui() {
+    $('#mIcon').innerHTML = this.playing ? '<rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/>' : '<path d="M8 5v14l11-7z" fill="currentColor"/>';
+    $('#mPlay').setAttribute('aria-label', this.playing ? 'หยุดเมโทรนอม' : 'เริ่มเมโทรนอม');
+  }
+};
+function renderSongTempoRow() {
+  const row = $('#songTempoRow'), s = S.route.name === 'song' ? curSong() : null;
+  row.innerHTML = s ? `${s.bpm ? `<button class="btn slim" data-a="usesong">ใช้ tempo ของเพลง (${esc(s.bpm)})</button>` : ''}
+    <button class="btn slim" data-a="savetempo">บันทึก BPM ตอนนี้ให้เพลงนี้</button>` : '';
+}
+
+/* ================= events ================= */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]'); if (!el) return;
+  const a = el.dataset.a, V = S.view;
+  switch (a) {
+    case 'new': openEditor(null); break;
+    case 'sample': openEditor(null, SAMPLE); break;
+    case 'open': openSong(el.dataset.id); break;
+    case 'back': flushPatch(); S.route = { name: 'library', id: null }; renderView(); window.scrollTo(0, 0); break;
+    case 'edit': flushPatch(); openEditor(S.route.id); break;
+    case 'cancel': discardDraftMedia(); if (S.route.id) openSong(S.route.id); else { S.route = { name: 'library', id: null }; renderView(); } break;
+    case 'save': saveDraft(); break;
+    case 'del': confirmDelete(); break;
+    case 'delok': doDelete(); break;
+    case 't+': if (V.t < 11) { V.t++; renderDyn(); queuePatch(); } break;
+    case 't-': if (V.t > -11) { V.t--; renderDyn(); queuePatch(); } break;
+    case 'capo+': if (V.capo < 11) { V.capo++; renderDyn(); queuePatch(); } break;
+    case 'capo-': if (V.capo > 0) { V.capo--; renderDyn(); queuePatch(); } break;
+    case 'dragmode': S.dragMode = !S.dragMode; renderDyn(); break;
+    case 'undo': undoMove(); break;
+    case 'reset': V.t = 0; V.capo = 0; renderDyn(); queuePatch(); break;
+    case 'acc': S.prefs.acc = el.dataset.v; savePrefs(); renderDyn(); break;
+    case 'fs+': S.prefs.fs = Math.min(34, S.prefs.fs + 2); savePrefs(); renderDyn(); break;
+    case 'fs-': S.prefs.fs = Math.max(13, S.prefs.fs - 2); savePrefs(); renderDyn(); break;
+    case 'dg': S.prefs.diagrams = !S.prefs.diagrams; savePrefs(); renderDyn(); break;
+    case 'backup': openBackup(); break;
+    case 'gh': openGh(); break;
+    case 'ghconnect': ghConnect(); break;
+    case 'ghoff': ghDisconnect(); break;
+    case 'ghsync': GH.flush().then(() => GH.pull()); break;
+    case 'as': if (AS.on) asStop(); else asStart(); break;
+    case 'aspeed': S.prefs.speed = +el.dataset.v; savePrefs(); renderAs(); toast('ความเร็ว ' + S.prefs.speed + ' จาก 5 (' + AS_NAME[S.prefs.speed - 1] + ')'); break;
+    case 'export': doExport(); break;
+    case 'import': { const f = $('#impFile'); if (f) f.click(); break; }
+    case 'mclose': closeModal(); break;
+    case 'mbg': if (e.target === el) closeModal(); break;
+    case 'ins-chord': insertAtCursor('[]', 1); break;
+    case 'ins-sec': insertAtCursor('# Verse\n', 0); break;
+    case 'ins-bar': insertAtCursor('[/]', 0); break;
+    case 'zoom': zoomBlob(el.dataset.id); break;
+    case 'zoomscan': if (S.scan) zoom(S.scan.thumbs[+el.dataset.i]); break;
+    case 'tabtoggle': { const k = el.dataset.key; S.tabOpen[k] = !isTabShown(k); if (S.route.name === 'edit') updatePreview(); else renderDyn(); break; }
+    case 'tabsall': S.tabAll = !S.tabAll; S.tabOpen = {}; renderDyn(); break;
+    case 'pick': { S.pick = { key: el.dataset.key, t: el.dataset.t }; const f = $('#mediaFile'); f.value = ''; f.click(); break; }
+    case 'unpick': removeMedia(el.dataset.key, el.dataset.t); break;
+    case 'reassign': reassignMedia(el.dataset.id); break;
+    case 'orphandel': dropOrphan(el.dataset.id); break;
+    case 'scan': S.scanMode = el.dataset.mode; { const f = $('#scanFile'); f.value = ''; f.click(); } break;
+    case 'scancancel': closeModal(); break;
+    case 'rescan': if (S.scan) runScan(S.scan.files, 'draft', 'complex'); break;
+    case 'mplay': Metro.playing ? Metro.stop() : Metro.start(); break;
+    case 'mminus': Metro.setBpm(Metro.bpm - 1); break;
+    case 'mplus': Metro.setBpm(Metro.bpm + 1); break;
+    case 'mmore': { const more = $('#dockMore'), open = more.hidden; more.hidden = !open; el.setAttribute('aria-expanded', String(open)); break; }
+    case 'tap': Metro.tap(); break;
+    case 'usesong': { const s = curSong(); if (s) { if (s.bpm) Metro.setBpm(s.bpm); Metro.setBeats(s.beats || 4); } break; }
+    case 'savetempo': { const s = curSong(); if (s) { patchSong(s.id, { bpm: Metro.bpm, beats: Metro.beats }).then(() => { renderView(); toast('บันทึก tempo ให้เพลงนี้แล้ว'); }); } break; }
+  }
+});
+document.addEventListener('input', e => {
+  const id = e.target.id, D = S.draft;
+  if (id === 'q') { S.q = e.target.value; S._refocusQ = true; renderList(); }
+  else if (id === 'bpmRange') Metro.setBpm(e.target.value);
+  else if (id === 'volRange') { Metro.vol = e.target.value / 100; S.prefs.vol = Number(e.target.value); savePrefs(); }
+  else if (D && S.route.name === 'edit') {
+    const map = { f_title: 'title', f_artist: 'artist', f_key: 'key', f_bpm: 'bpm', f_capo: 'capo', f_body: 'body' };
+    if (map[id]) { D[map[id]] = e.target.value; if (id === 'f_body' || id === 'f_key') updatePreview(); $('#formErr').textContent = ''; }
+  }
+});
+document.addEventListener('change', e => {
+  const id = e.target.id;
+  if (id === 'sortSel') { S.sort = e.target.value; renderList(); }
+  else if (id === 'bpmIn') Metro.setBpm(e.target.value);
+  else if (id === 'beatsSel') Metro.setBeats(Number(e.target.value));
+  else if (id === 'f_beats' && S.draft) S.draft.beats = Number(e.target.value);
+  else if (id === 'impFile' && e.target.files[0]) doImport(e.target.files[0]);
+  else if (id === 'mediaFile' && e.target.files[0]) attachMedia(e.target.files[0]);
+  else if (id === 'scanFile' && e.target.files.length) runScan(e.target.files, S.scanMode || 'new');
+});
+document.addEventListener('toggle', e => { if (e.target.classList && e.target.classList.contains('opts')) S.optsOpen = e.target.open; }, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (Drag.on) endDrag(false); else closeModal(); } });
+
+/* ================= section media (strum / tab images) ================= */
+const upErr = e => ({ too_large: 'รูปใหญ่เกินไป', quota_or_state: 'พื้นที่เก็บรูปของเพจเต็มแล้ว', rate_limited: 'อัปโหลดถี่เกินไป รอสักครู่แล้วลองใหม่',
+  not_granted: 'ไม่มีสิทธิ์อัปโหลดรูป', capability_disabled: 'อัปโหลดรูปไม่ได้ในหน้านี้' })[e && e.code] || (e && e.decode ? 'เปิดไฟล์รูปนี้ไม่ได้ ลองบันทึกเป็น JPG หรือ PNG' : e && e.status ? 'อัปโหลดขึ้น GitHub ไม่สำเร็จ: ' + e.message : 'อัปโหลดรูปไม่สำเร็จ ลองอีกครั้ง');
+const dimsOf = b => ({ w: b.naturalWidth || b.width, h: b.naturalHeight || b.height });
+async function loadBitmap(file) {
+  if (window.createImageBitmap) { try { return await createImageBitmap(file); } catch (e) {} }
+  return new Promise((res, rej) => {
+    const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { URL.revokeObjectURL(u); res(im); };
+    im.onerror = () => { URL.revokeObjectURL(u); rej({ decode: true }); };
+    im.src = u;
+  });
+}
+function drawTile(b, sy, sh, maxDim) {
+  const { w } = dimsOf(b), sc = Math.min(1, maxDim / Math.max(w, sh));
+  const cv = document.createElement('canvas');
+  cv.width = Math.max(1, Math.round(w * sc)); cv.height = Math.max(1, Math.round(sh * sc));
+  const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
+  cx.drawImage(b, 0, sy, w, sh, 0, 0, cv.width, cv.height);
+  return cv;
+}
+const canvasBlob = (cv, q) => new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej({ decode: true }), 'image/jpeg', q));
+async function prepImage(file, maxDim) {
+  const b = await loadBitmap(file);
+  try { return await canvasBlob(drawTile(b, 0, dimsOf(b).h, maxDim), .9); } finally { if (b.close) b.close(); }
+}
+async function dropAssets(ids) {
+  if (!IMG.can()) return;
+  for (const id of ids) { try { await IMG.remove(id); } catch (e) {} }
+}
+function discardDraftMedia() { dropAssets(S.mediaNew); S.mediaNew = []; S.mediaTrash = []; }
+
+function renderMediaPanel() {
+  const box = $('#mediaPanel'); if (!box || !S.draft) return;
+  const D = S.draft, secs = S.lines.filter(L => L.type === 'section');
+  const sig = secs.map(L => L.key).join('|') + '#' + D.media.map(e => e.k + e.t + e.id).join(',') + IMG.kind;
+  if (sig === S._panelSig) return; S._panelSig = sig;
+  const head = `<h2>รูปประกอบแต่ละส่วนของเพลง</h2>`;
+  if (!IMG.can()) { box.innerHTML = head + '<p class="hint">อัปโหลดรูปไม่ได้ในหน้านี้ (ถ้าเปิดผ่าน Claude ต้องเป็นบัญชีเจ้าของเพจ ถ้าเปิดจากเว็บทั่วไปเบราว์เซอร์ต้องรองรับ IndexedDB)</p>'; return; }
+  if (!secs.length) { box.innerHTML = head + '<p class="hint">พิมพ์หัวข้อในเพลงก่อน เช่น <code># Verse</code> หรือ <code># Chorus</code> แล้วจะเลือกใส่รูป strumming/picking และรูป tab ให้แต่ละส่วนได้ (ใส่หรือไม่ใส่ก็ได้)</p>'; return; }
+  const slot = (k, t, label) => {
+    const e = D.media.find(x => x.k === k && x.t === t);
+    return `<div class="slot"><div class="slot-h">${label}</div>
+      ${e ? `<img class="thumb" data-blob="${esc(e.id)}" alt="" data-a="zoom" data-id="${esc(e.id)}">` : '<div class="thumb none">ยังไม่มีรูป</div>'}
+      <div class="slot-a"><button class="btn slim" data-a="pick" data-key="${esc(k)}" data-t="${t}">${e ? 'เปลี่ยนรูป' : 'เพิ่มรูป'}</button>${e ? `<button class="btn slim danger" data-a="unpick" data-key="${esc(k)}" data-t="${t}">ลบรูป</button>` : ''}</div></div>`;
+  };
+  const rows = secs.map(L => `<div class="medrow"><div class="medname">${esc(L.text)}</div><div class="slots">
+    ${slot(L.key, 'strum', 'Strumming / Picking (แสดงทางขวาของเนื้อเพลง)')}${slot(L.key, 'tab', 'Tab (แสดงเหนือส่วนนี้ ซ่อนไว้เป็นค่าเริ่มต้น)')}</div></div>`).join('');
+  const keys = secs.map(L => L.key), orph = D.media.filter(e => !keys.includes(e.k));
+  const opts = secs.map(L => `<option value="${esc(L.key)}">${esc(L.text)}</option>`).join('');
+  const oh = orph.length ? `<p class="hint" style="margin-top:14px">รูปเหล่านี้ยังไม่มีหัวข้อรองรับ (เช่น เพราะเปลี่ยนชื่อหัวข้อ) ย้ายไปหัวข้อที่ต้องการหรือลบได้</p>` +
+    orph.map(e => `<div class="orph"><span>${e.t === 'tab' ? 'Tab' : 'Strumming'} ของ “${esc(e.k.replace(/#\d+$/, ''))}”</span>
+      <img class="thumb" style="width:64px;height:44px" data-blob="${esc(e.id)}" alt="">
+      <select id="orph_${esc(e.id)}" aria-label="ย้ายไปหัวข้อ">${opts}</select>
+      <button class="btn slim" data-a="reassign" data-id="${esc(e.id)}">ย้ายมาหัวข้อนี้</button>
+      <button class="btn slim danger" data-a="orphandel" data-id="${esc(e.id)}">ลบรูป</button></div>`).join('') : '';
+  box.innerHTML = head + '<p class="hint">ใส่หรือไม่ใส่ก็ได้ รูป strumming/picking จะอยู่ด้านขวาของเนื้อเพลงในส่วนนั้น ส่วนรูป tab จะอยู่ด้านบนและถูกซ่อนไว้จนกว่าจะกดปุ่ม Tab</p>' + rows + oh;
+}
+async function prepCover(file) {
+  const b = await loadBitmap(file);
+  try { const { w, h } = dimsOf(b), m = Math.min(w, h); return await canvasBlob(drawCrop(b, (w - m) / 2, (h - m) / 2, m, m, 480), .85); } finally { if (b.close) b.close(); }
+}
+function drawCrop(b, sx, sy, sw, sh, out) {
+  const sc = Math.min(1, out / Math.max(sw, sh)), cv = document.createElement('canvas');
+  cv.width = Math.max(1, Math.round(sw * sc)); cv.height = Math.max(1, Math.round(sh * sc));
+  const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
+  cx.drawImage(b, sx, sy, sw, sh, 0, 0, cv.width, cv.height);
+  return cv;
+}
+function coverFieldHtml() {
+  if (!IMG.can() || !S.draft) return '';
+  const c = S.draft.cover;
+  return `<div class="cvrow"><div class="cvbox${c ? ' filled' : ''}">${c ? `<img data-blob="${esc(c)}" alt="รูปปก" data-a="zoom" data-id="${esc(c)}">` : 'รูปปก'}</div>
+    <div><div class="flabel" style="margin-bottom:6px">รูปประกอบชื่อเพลง (จะเห็นในรายการเพลงด้วย ไม่ใส่ก็ได้)</div>
+    <div class="slot-a"><button class="btn slim" data-a="pick" data-key="" data-t="cover" type="button">${c ? 'เปลี่ยนรูป' : 'เพิ่มรูป'}</button>${c ? '<button class="btn slim danger" data-a="unpick" data-key="" data-t="cover" type="button">ลบรูป</button>' : ''}</div></div></div>`;
+}
+function updateCoverField() { const el = $('#coverField'); if (el) el.innerHTML = coverFieldHtml(); }
+async function attachMedia(file) {
+  const pk = S.pick; if (!pk || !IMG.can() || S.route.name !== 'edit') return;
+  toast('กำลังอัปโหลดรูป…');
+  try {
+    const blob = pk.t === 'cover' ? await prepCover(file) : await prepImage(file, pk.t === 'tab' ? 1600 : 1000);
+    const id = await IMG.upload(blob), D = S.draft;
+    if (!D || S.route.name !== 'edit') { dropAssets([id]); return; }
+    S.mediaNew.push(id);
+    if (pk.t === 'cover') { if (D.cover) S.mediaTrash.push(D.cover); D.cover = id; updateCoverField(); }
+    else {
+      const old = D.media.findIndex(e => e.k === pk.key && e.t === pk.t);
+      if (old >= 0) { S.mediaTrash.push(D.media[old].id); D.media.splice(old, 1); }
+      D.media.push({ k: pk.key, t: pk.t, id }); updatePreview();
+    }
+    toast('เพิ่มรูปแล้ว');
+  } catch (e) { toast(upErr(e)); }
+}
+function removeMedia(k, t) {
+  const D = S.draft;
+  if (t === 'cover') { if (D.cover) S.mediaTrash.push(D.cover); D.cover = ''; updateCoverField(); return; }
+  const i = D.media.findIndex(e => e.k === k && e.t === t); if (i < 0) return;
+  S.mediaTrash.push(D.media[i].id); D.media.splice(i, 1); updatePreview();
+}
+function reassignMedia(id) {
+  const D = S.draft, e = D.media.find(x => x.id === id), sel = document.getElementById('orph_' + id); if (!e || !sel) return;
+  const clash = D.media.findIndex(x => x !== e && x.k === sel.value && x.t === e.t);
+  if (clash >= 0) { S.mediaTrash.push(D.media[clash].id); D.media.splice(clash, 1); }
+  e.k = sel.value; updatePreview();
+}
+function dropOrphan(id) {
+  const D = S.draft, i = D.media.findIndex(e => e.id === id); if (i < 0) return;
+  S.mediaTrash.push(id); D.media.splice(i, 1); updatePreview();
+}
+function zoomBlob(id) { modal(`<img class="zoom" data-blob="${esc(id)}" alt=""><div class="acts"><button class="btn" data-a="mclose">ปิด</button></div>`, true); }
+function zoom(src) { modal(`<img class="zoom" src="${esc(src)}" alt=""><div class="acts"><button class="btn" data-a="mclose">ปิด</button></div>`, true); }
+
+/* ================= scan a photo / screenshot into a chord sheet ================= */
+const scanPrompt = (sliced, n) => `You are converting a photographed or screenshotted guitar chord sheet (Thai and/or English) into a strict plain-text format for a chord-book app.
+
+The ${n} attached image(s) show the sheet in reading order.${sliced ? ' Tall pages were cut into consecutive horizontal slices that overlap by a few lines: the overlapping lines appear in both slices, so output them only once.' : ''}
+
+Reply with ONLY one JSON object and no commentary:
+{"title": string, "artist": string, "key": string, "bpm": number or null, "beats": 2|3|4|5|6 or null, "capo": number or null, "body": string, "notes": string[]}
+
+Rules for "body" (one string, lines separated by \\n):
+1. Chords go inline in square brackets, placed immediately before the character or syllable they are printed above. Use horizontal position: a chord printed above a lyric line belongs right before the character sitting directly under the chord's first letter. Example: "[G]Amazing [C]grace". Never leave chord names on a separate line above the lyrics.
+2. Thai text: copy exactly as printed. Never separate a consonant from its vowel or tone marks; put a chord before a whole consonant cluster.
+3. Chord spelling: A-G with b or # (write the flat sign as b and the sharp sign as #), then the quality as printed: m, 7, m7, maj7, sus2, sus4, add9, dim, 6, and slash basses like G/B. Copy the chords exactly as printed. Do not add, remove, simplify, transpose or correct them.
+4. Lines that contain only chords (intro, interlude, solo, outro) become chord-only lines of bracketed chords, e.g. "[Am] [F] [C] [G]".
+5. Bar lines: wherever the sheet shows "|" or "/" as a measure separator between chords, write "[/]" there, e.g. "[G] [/] [C] [/] [D]".
+6. Section headings printed on the sheet (Intro, Verse 1, Chorus, Hook, Bridge, Solo, Outro, ท่อน 1, ฮุก, ...) go on their own line as "# " followed by the heading exactly as printed. Do not invent headings that are not printed. Put one blank line between sections.
+7. Copy lyrics exactly. Do not translate, fix spelling, complete missing words or invent anything. If a piece is unreadable, write "?" there and mention it in "notes".
+8. Skip page numbers, watermarks, ads, URLs and copyright footers. Tab and strumming diagrams are not transcribed; if the sheet has them, say so in "notes".
+9. Repeat marks such as "x2" or "ซ้ำ" stay as printed text on their own line; do not duplicate the section.
+
+Other fields: title and artist as printed ("" if absent). key only if printed (like "Key: G" or "คีย์ G"), otherwise "". bpm, beats (the top number of the time signature; 6 for 6/8) and capo only if printed, otherwise null. "notes": up to 8 short notes written in Thai about anything uncertain, unreadable or skipped.`;
+const sampleErr = e => ({
+  not_granted: 'คุณยังไม่ได้อนุญาตให้เพจนี้ใช้ Claude', sampling_disabled: 'บัญชีนี้ยังใช้ Claude ผ่านเพจไม่ได้',
+  images_unavailable: 'หน้านี้ส่งรูปให้ Claude ไม่ได้', image_rejected: 'ไฟล์รูปนี้ใช้ไม่ได้ ลองรูปอื่น (JPG หรือ PNG ไม่เกิน 20 MB)',
+  rate_limited: 'เรียกใช้ถี่เกินไปหรือโควต้า Claude เต็ม ลองใหม่ภายหลัง', session_expired: 'เซสชันหมดอายุ โหลดหน้านี้ใหม่แล้วล็อกอินอีกครั้ง',
+  invalid_json: 'อ่านผลลัพธ์ไม่สำเร็จ ลองอีกครั้ง หรือถ่ายรูปให้ชัดและเห็นทั้งหน้า', refused: 'Claude ไม่สามารถอ่านรูปนี้ได้',
+  empty_completion: 'ไม่ได้ผลลัพธ์กลับมา ลองอีกครั้ง', prompt_too_large: 'ข้อมูลใหญ่เกินไป', upstream_error: 'การเชื่อมต่อขัดข้อง ลองอีกครั้ง'
+})[e && e.code] || (e && e.decode ? 'เปิดไฟล์รูปนี้ไม่ได้ ลองบันทึกเป็น JPG หรือ PNG แล้วเลือกใหม่' : 'อ่านรูปไม่สำเร็จ ลองอีกครั้ง');
+async function prepScan(files, maxCount) {
+  const bmps = [];
+  for (const f of files) bmps.push(await loadBitmap(f));
+  const counts = bmps.map(b => { const { w, h } = dimsOf(b); return Math.max(1, Math.min(4, Math.round(h / (w * .85)))); });
+  while (counts.reduce((a, b) => a + b, 0) > maxCount) {
+    const i = counts.indexOf(Math.max(...counts)); if (counts[i] <= 1) break; counts[i]--;
+  }
+  const tiles = [], thumbs = [];
+  for (let n = 0; n < bmps.length; n++) {
+    const b = bmps[n], { h } = dimsOf(b), k = counts[n];
+    thumbs.push(drawTile(b, 0, h, 1400).toDataURL('image/jpeg', .75));
+    const th = h / k, ov = k > 1 ? th * .1 : 0;
+    for (let i = 0; i < k; i++) {
+      const y0 = Math.max(0, i * th - ov), y1 = Math.min(h, (i + 1) * th + ov);
+      tiles.push(await canvasBlob(drawTile(b, y0, y1 - y0, 1500), .9));
+    }
+    if (b.close) b.close();
+  }
+  return { tiles, thumbs, sliced: counts.some(c => c > 1) };
+}
+async function runScan(fileList, mode, tier) {
+  const files = [...fileList].filter(f => !f.type || /^image\//.test(f.type));
+  if (!files.length) return;
+  if (!S.sample || !S.imgLimits) {
+    return modal(`<h2>ยังใช้ฟีเจอร์นี้ไม่ได้</h2><p>การแปลงรูปเป็นคอร์ดใช้ Claude ในบัญชีของคุณ ซึ่งยังไม่พร้อมในหน้านี้ ลองเปิดเพจนี้จากเว็บหรือแอป Claude ที่ล็อกอินอยู่ แล้วลองอีกครั้ง</p><div class="acts"><button class="btn" data-a="mclose">ปิด</button></div>`);
+  }
+  const lim = S.imgLimits;
+  if (files.length > lim.maxCount) return toast(`เลือกรูปได้ไม่เกิน ${lim.maxCount} รูปต่อครั้ง`);
+  const ctl = S.scanCtl = new AbortController(), t0 = Date.now();
+  const set = m => { const el = $('#scanMsg'); if (el) el.textContent = m; };
+  S.scanPhase = 'prep';
+  modal(`<h2>กำลังอ่านรูปเพลง</h2><p id="scanMsg">กำลังเตรียมรูป…</p><p class="hint" style="margin:-6px 0 0">การอ่านรูปใช้โควต้า Claude ของคุณ</p><div class="acts"><button class="btn" data-a="scancancel">ยกเลิก</button></div>`);
+  S.scanTimer = setInterval(() => { if (S.scanPhase === 'wait') set(`Claude กำลังอ่านและจัดคอร์ดให้… ${Math.round((Date.now() - t0) / 1000)} วินาที`); }, 1000);
+  try {
+    const pre = await prepScan(files, lim.maxCount);
+    if (ctl.signal.aborted) return;
+    S.scanPhase = 'wait'; set('Claude กำลังอ่านและจัดคอร์ดให้… (ครั้งแรกอาจมีหน้าต่างขออนุญาตใช้ Claude ให้กดอนุญาต)');
+    const r = await S.sample.json(scanPrompt(pre.sliced, pre.tiles.length), {
+      images: pre.tiles, modelTier: tier || 'default', signal: ctl.signal,
+      onText: ({ text }) => { S.scanPhase = 'stream'; set(`กำลังเขียนผลลัพธ์… ${text.length.toLocaleString()} ตัวอักษร`); }
+    });
+    S.scanCtl = null; clearInterval(S.scanTimer); closeModal();
+    applyScan(r, pre, files, mode, tier);
+  } catch (e) {
+    clearInterval(S.scanTimer); S.scanCtl = null;
+    if (e && e.code === 'cancelled') return;
+    modal(`<h2>อ่านรูปไม่สำเร็จ</h2><p>${esc(sampleErr(e))}</p><div class="acts"><button class="btn" data-a="mclose">ปิด</button></div>`);
+  }
+}
+function applyScan(r, pre, files, mode, tier) {
+  if (!r || typeof r !== 'object' || typeof r.body !== 'string' || !r.body.trim()) {
+    return modal(`<h2>ไม่พบคอร์ดหรือเนื้อเพลงในรูป</h2><p>ลองถ่ายให้ชัดขึ้น เห็นทั้งหน้า และไม่เอียงมาก แล้วเลือกรูปใหม่</p><div class="acts"><button class="btn" data-a="mclose">ปิด</button></div>`);
+  }
+  const key = parseKey(String(r.key || '')), bpm = Math.round(Number(r.bpm)), beats = Number(r.beats), capo = Math.round(Number(r.capo));
+  const okBeats = [2, 3, 4, 5, 6].includes(beats), okCapo = Number.isFinite(capo) && capo >= 0 && capo <= 11;
+  const preset = {
+    title: String(r.title || '').slice(0, 200), artist: String(r.artist || '').slice(0, 200), key: key ? key.text : '',
+    bpm: bpm >= 30 && bpm <= 240 ? bpm : '', beats: okBeats ? beats : 4, capo: okCapo ? capo : 0,
+    body: r.body.replace(/\r\n?/g, '\n').replace(/\s+$/, '')
+  };
+  const notes = (Array.isArray(r.notes) ? r.notes : []).map(String).filter(Boolean).slice(0, 8);
+  const scan = { notes, thumbs: pre.thumbs, files, tier: tier || 'default' };
+  if (mode === 'draft' && S.route.name === 'edit' && S.draft) {
+    const D = S.draft;
+    S.undo.push(D.body); D.body = preset.body;
+    for (const f of ['title', 'artist', 'key']) if (!String(D[f]).trim() && preset[f]) D[f] = preset[f];
+    if (!D.bpm && preset.bpm) D.bpm = preset.bpm;
+    if (okBeats) D.beats = beats;
+    if (okCapo && !Number(D.capo)) D.capo = capo;
+    S.scan = scan; S._panelSig = null; renderView(); window.scrollTo(0, 0);
+  } else openEditor(null, preset, scan);
+  toast('อ่านรูปเสร็จแล้ว ตรวจทานก่อนบันทึกนะ');
+}
+function scanBanner() {
+  const sc = S.scan; if (!sc) return '';
+  return `<div class="scanbox"><b>นำเข้าจากรูปแล้ว</b> ตรวจคอร์ดและเนื้อเพลงเทียบกับรูปต้นฉบับก่อนบันทึก ลากคอร์ดในตัวอย่างเพื่อแก้ตำแหน่งได้
+    ${sc.notes.length ? `<ul>${sc.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
+    <div class="scanpics">${sc.thumbs.map((u, i) => `<img src="${esc(u)}" alt="รูปต้นฉบับ ${i + 1}" data-a="zoomscan" data-i="${i}">`).join('')}</div>
+    ${sc.tier !== 'complex' ? '<button class="btn slim" data-a="rescan" type="button">อ่านซ้ำแบบละเอียด</button>' : ''}</div>`;
+}
+// images that fail to load (deleted asset) show a placeholder
+document.addEventListener('error', e => {
+  if (e.target && e.target.tagName === 'IMG') { const f = e.target.closest('figure, .cover, .cvbox'); if (f) f.classList.add('broken'); else if (e.target.classList.contains('hcover')) e.target.hidden = true; }
+}, true);
+
+/* ================= drag chords ================= */
+function flatten(line) {
+  let text = ''; const items = [];
+  line.segs.forEach((sg, si) => {
+    if (sg.chord || sg.mark) items.push({ pos: text.length, item: sg.chord ? { chord: sg.chord } : { mark: sg.mark }, si });
+    text += sg.text;
+  });
+  return { text, items };
+}
+function serializeFlat(f) {
+  let out = '', cur = 0;
+  for (const it of f.items.slice().sort((a, b) => a.pos - b.pos)) {
+    out += f.text.slice(cur, it.pos) + '[' + (it.item.chord ? it.item.chord.raw : it.item.mark) + ']'; cur = it.pos;
+  }
+  return (out + f.text.slice(cur)).replace(/^\s+/, '');
+}
+function moveChord(body, lines, from, to) {
+  const raw = body.replace(/\r\n?/g, '\n').split('\n');
+  const Lf = lines[from.l], Lt = lines[to.l];
+  if (!Lf || !Lt || !Lf.segs || !Lt.segs) return body;
+  const ff = flatten(Lf), k = ff.items.findIndex(x => x.si === from.s);
+  if (k < 0) return body;
+  const [moved] = ff.items.splice(k, 1);
+  const ft = Lt === Lf ? ff : flatten(Lt);
+  let at = ft.items.length;
+  while (at > 0 && ft.items[at - 1].pos > to.gi) at--;
+  ft.items.splice(at, 0, { pos: to.gi, item: moved.item, si: -1 });
+  const reps = [{ range: Lt.src, text: serializeFlat(ft) }];
+  if (Lt !== Lf) reps.push({ range: Lf.src, text: serializeFlat(ff) });
+  reps.sort((a, b) => b.range[0] - a.range[0]);
+  for (const r of reps) raw.splice(r.range[0], r.range[1] - r.range[0] + 1, ...(r.text.trim() ? [r.text] : []));
+  return raw.join('\n');
+}
+
+const Drag = { on: false };
+const dragEnabled = () => S.route.name === 'edit' || (S.route.name === 'song' && S.dragMode);
+const curBody = () => S.route.name === 'edit' ? S.draft.body : ((curSong() || {}).body || '');
+let writeQ = Promise.resolve();
+function setBody(nb) {
+  if (S.route.name === 'edit') { S.draft.body = nb; const ta = $('#f_body'); if (ta) ta.value = nb; updatePreview(); }
+  else { const s = curSong(); if (!s) return; s.body = nb; renderDyn(); writeQ = writeQ.then(() => patchSong(s.id, { body: nb })); }
+}
+function doMove(from, to) {
+  const old = curBody(), nb = moveChord(old, S.lines, from, to);
+  if (nb === old) return;
+  S.undo.push(old); if (S.undo.length > 50) S.undo.shift();
+  setBody(nb);
+}
+function undoMove() { if (S.undo.length) setBody(S.undo.pop()); }
+
+function lineCandidates(ln) {
+  const line = S.lines[+ln.dataset.l], out = [], rng = document.createRange();
+  let offset = 0, last = null;
+  line.segs.forEach((sg, si) => {
+    const ly = ln.querySelector(`.ly[data-s="${si}"]`), tn = ly && sg.text ? ly.firstChild : null;
+    if (tn && tn.nodeType === 3) {
+      const t = sg.text; let i = 0;
+      while (i < t.length) {
+        const c = String.fromCodePoint(t.codePointAt(i)); let j = i + c.length;
+        if (isMark(c)) { i = j; continue; }
+        while (j < t.length) { const c2 = String.fromCodePoint(t.codePointAt(j)); if (isMark(c2)) j += c2.length; else break; }
+        rng.setStart(tn, i); rng.setEnd(tn, j);
+        const r = rng.getBoundingClientRect();
+        if (r.height > 0) { out.push({ gi: offset + i, x: r.left, top: r.top, bottom: r.bottom }); last = { gi: offset + j, x: r.right, top: r.top, bottom: r.bottom }; }
+        i = j;
+      }
+    }
+    offset += sg.text.length;
+  });
+  if (last) out.push(last);
+  else { const r = ln.getBoundingClientRect(); out.push({ gi: 0, x: r.left, top: r.top, bottom: r.bottom }); }
+  return out;
+}
+function findTarget(x, y) {
+  let best = null, bd = Infinity;
+  for (const ln of Drag.box.querySelectorAll('.ln[data-l]')) {
+    const r = ln.getBoundingClientRect(), d = y < r.top ? r.top - y : y > r.bottom ? y - r.bottom : 0;
+    if (d < bd) { bd = d; best = ln; }
+  }
+  if (!best || bd > 70) return null;
+  let tgt = null, td = [Infinity, Infinity];
+  for (const c of lineCandidates(best)) {
+    const h = c.bottom - c.top, dy = y < c.top - h ? c.top - h - y : y > c.bottom ? y - c.bottom : 0, dx = Math.abs(x - c.x);
+    if (dy < td[0] - .5 || (Math.abs(dy - td[0]) <= .5 && dx < td[1])) { td = [dy, dx]; tgt = { ...c, l: +best.dataset.l }; }
+  }
+  return tgt;
+}
+function dragMove(x, y) {
+  Drag.x = x; Drag.y = y;
+  Drag.ghost.style.left = x + 'px'; Drag.ghost.style.top = y + 'px';
+  const t = findTarget(x, y); Drag.tgt = t;
+  if (t) { Drag.caret.hidden = false; Object.assign(Drag.caret.style, { left: (t.x - 1.5) + 'px', top: t.top + 'px', height: (t.bottom - t.top) + 'px' }); }
+  else Drag.caret.hidden = true;
+  const edge = window.innerHeight - ($('#dock').offsetHeight + 60);
+  Drag.sy = y < 80 ? -Math.ceil((80 - y) / 5) : y > edge ? Math.ceil((y - edge) / 5) : 0;
+}
+function endDrag(commit) {
+  if (!Drag.on) return;
+  clearInterval(Drag.timer); Drag.ghost.remove(); Drag.caret.remove();
+  Drag.ch.classList.remove('lifted'); document.body.classList.remove('dragging');
+  const from = Drag.from, tgt = Drag.tgt; Drag.on = false;
+  if (commit && tgt) doMove(from, { l: tgt.l, gi: tgt.gi });
+}
+document.addEventListener('pointerdown', e => {
+  if (Drag.on || e.button > 0 || !dragEnabled()) return;
+  const ch = e.target.closest && e.target.closest('.ch[data-k]'); if (!ch) return;
+  const box = ch.closest('.sheet'), ln = ch.closest('.ln[data-l]'); if (!box || !ln) return;
+  e.preventDefault();
+  Object.assign(Drag, { on: true, pid: e.pointerId, box, ch, from: { l: +ln.dataset.l, s: +ch.dataset.s }, tgt: null, sy: 0 });
+  Drag.ghost = document.createElement('div'); Drag.ghost.className = 'chost'; Drag.ghost.textContent = ch.textContent;
+  Drag.caret = document.createElement('div'); Drag.caret.className = 'dcaret'; Drag.caret.hidden = true;
+  document.body.append(Drag.ghost, Drag.caret);
+  ch.classList.add('lifted'); document.body.classList.add('dragging');
+  try { ch.setPointerCapture(e.pointerId); } catch (_) {}
+  dragMove(e.clientX, e.clientY);
+  Drag.timer = setInterval(() => { if (Drag.sy) { window.scrollBy(0, Drag.sy); dragMove(Drag.x, Drag.y); } }, 16);
+});
+document.addEventListener('pointermove', e => { if (Drag.on && e.pointerId === Drag.pid) dragMove(e.clientX, e.clientY); });
+document.addEventListener('pointerup', e => { if (Drag.on && e.pointerId === Drag.pid) endDrag(true); });
+document.addEventListener('pointercancel', e => { if (Drag.on && e.pointerId === Drag.pid) endDrag(false); });
+
+/* ================= boot ================= */
+loadPrefs();
+Metro.vol = S.prefs.vol / 100; $('#volRange').value = S.prefs.vol;
+Metro.buildLamps(); Metro.ui();
+const dock = $('#dock');
+const setDockH = () => document.documentElement.style.setProperty('--dock-h', dock.offsetHeight + 'px');
+if (window.ResizeObserver) new ResizeObserver(setDockH).observe(dock); setDockH();
+renderView();
+new MutationObserver(hydrateImages).observe(document.body, { childList: true, subtree: true });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && S.mode === 'github' && Date.now() - GH.last > 30000 && !GH.pend.size) GH.pull(); });
+window.addEventListener('online', () => { if (S.mode === 'github' && GH.pend.size) GH.flush(); });
+window.addEventListener('touchstart', () => { AS.touching = true; }, { passive: true });
+const asRelease = () => { AS.touching = false; AS.hold = performance.now() + 900; };
+window.addEventListener('touchend', asRelease, { passive: true }); window.addEventListener('touchcancel', asRelease, { passive: true });
+window.addEventListener('wheel', () => { AS.hold = performance.now() + 1500; }, { passive: true });
+window.addEventListener('keydown', e => { if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(e.key)) AS.hold = performance.now() + 1500; });
+initStore().then(() => { IMG.init(); S.loaded = true; renderView(); if (S.mode === 'github') GH.pull(); });
+})();
+</script>
+</body>
+</html>
