@@ -88,6 +88,20 @@ ul.songs{list-style:none;margin:0;padding:0}
 .artist{margin:2px 0 0;color:var(--muted);font-size:17px}
 .chips{display:flex;gap:8px;margin:10px 0 0;flex-wrap:wrap}
 .chips span{font:500 13px var(--ui);border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--surface)}
+
+/* youtube player */
+.ytbar{display:flex;align-items:center;gap:10px;margin:14px 0 0;padding:8px 10px 8px 8px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.ytplay{width:38px;height:38px;border-radius:50%;border:0;background:var(--chord);color:var(--on-chord);display:grid;place-items:center;cursor:pointer;padding:0;flex:0 0 auto}
+.ytplay:disabled{opacity:.5;cursor:default}
+.ytmid{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.yttitle{font:500 13px var(--ui);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ytrow{display:flex;align-items:center;gap:8px}
+.ytseek{flex:1;accent-color:var(--chord);min-width:0}
+.yttime{font:500 12px var(--ui);color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.ytlink{flex:0 0 auto;display:grid;place-items:center;width:30px;height:30px;border-radius:8px;color:var(--muted)}
+.ytlink:hover{background:var(--raised);color:var(--ink)}
+.ytbox{position:fixed;left:-9999px;top:0;width:300px;height:170px}
+.ytnote{font:500 12px var(--ui);color:var(--muted)}
 .tools{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-top:14px;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
 .stepper{display:flex;align-items:center;gap:6px}
 .stepper .lbl{font:500 13px var(--ui);color:var(--muted);margin-right:2px}
@@ -128,12 +142,22 @@ details.opts summary{cursor:pointer;font:500 13px var(--ui);color:var(--muted);p
 .ch[data-mk]{color:var(--muted);font-weight:400}
 .blk-main.has-strum{display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,30%);gap:18px;align-items:start}
 .tabimg{margin:0 0 .8em}
-.tabimg img,.strumimg img{display:block;max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:6px;cursor:zoom-in}
+.tabimg img,.strumimg img,.mgFig img{display:block;max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:6px;cursor:zoom-in}
 .strumimg{margin:.2em 0 0}
-.strumimg figcaption{font:500 12px var(--ui);color:var(--muted);margin-top:4px}
+.strumimg figcaption,.mgFig figcaption{font:500 12px var(--ui);color:var(--muted);margin-top:4px}
 figure.broken img{display:none}
 figure.broken::after{content:'รูปหายไป';color:var(--muted);font:500 12px var(--ui)}
 @media (max-width:480px){ .blk-main.has-strum{grid-template-columns:1fr} .strumimg{order:-1;max-width:220px} }
+
+/* song view tabs + media gallery */
+.songtabs{margin:0 0 16px}
+.mediaGallery{display:flex;flex-direction:column;gap:22px}
+.mgItem{border-top:1px solid var(--line);padding-top:14px}
+.mgItem:first-child{border-top:0;padding-top:0}
+.mgHead{display:inline-block;padding:1px 12px 1px 10px;border-left:3px solid var(--chord);background:var(--surface);font:600 .78em var(--ui);color:var(--muted);margin:0 0 10px}
+.mgRow{display:flex;gap:16px;flex-wrap:wrap}
+.mgFig{margin:0;max-width:360px;flex:1 1 220px}
+@media (max-width:480px){ .mgFig{max-width:none;flex:1 1 100%} }
 
 /* cover */
 .cover{width:52px;height:52px;border-radius:6px;overflow:hidden;background:var(--chord-soft)}
@@ -219,9 +243,10 @@ body.dragging,body.dragging *{cursor:grabbing !important;user-select:none;-webki
 .bpmval input{width:64px;min-height:0;border:0;background:transparent;padding:0;text-align:center;font:700 28px var(--ui);-moz-appearance:textfield}
 .bpmval input::-webkit-outer-spin-button,.bpmval input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .bpmval span{font:500 11px var(--ui);color:var(--muted);margin-top:2px}
-.lamps{display:flex;align-items:center;gap:8px;flex:1;justify-content:center;min-width:0}
-.lamp{width:13px;height:13px;border-radius:50%;background:var(--line);flex:0 0 auto}
-.lamp.first{width:18px;height:18px;border:2px solid var(--amber);background:transparent}
+.lamps{display:flex;align-items:center;gap:6px;flex:1;justify-content:center;min-width:0;flex-wrap:wrap;row-gap:4px}
+.lamp{width:11px;height:11px;border-radius:50%;background:var(--line);flex:0 0 auto}
+.lamp.first{width:17px;height:17px;border:2px solid var(--amber);background:transparent}
+.lamp.mid{width:14px;height:14px;border:2px solid var(--muted);background:transparent}
 .lamp.on{background:var(--amber);box-shadow:0 0 0 5px var(--amber-soft);border-color:var(--amber)}
 .dock-more{display:grid;gap:12px;padding-top:12px;margin-top:10px;border-top:1px solid var(--line)}
 .dock-more .row2{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:end}
@@ -266,7 +291,8 @@ body.dragging,body.dragging *{cursor:grabbing !important;user-select:none;-webki
         <label>อัตราจังหวะ
           <select id="beatsSel">
             <option value="2">2/4</option><option value="3">3/4</option><option value="4" selected>4/4</option>
-            <option value="5">5/4</option><option value="6">6/8</option>
+            <option value="5">5/4</option><option value="6">6/8</option><option value="9">9/8</option>
+            <option value="16">16 บีท (นับย่อย 16th)</option>
           </select>
         </label>
         <label class="vol">ความดัง<input id="volRange" type="range" min="0" max="100" value="80"></label>
@@ -284,6 +310,7 @@ body.dragging,body.dragging *{cursor:grabbing !important;user-select:none;-webki
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <div id="modalRoot"></div>
+<div class="ytbox" id="ytbox" aria-hidden="true"></div>
 <input type="file" id="mediaFile" accept="image/*" hidden>
 <input type="file" id="scanFile" accept="image/*" multiple hidden>
 
@@ -476,8 +503,9 @@ const PREF_KEY = 'chordbook.prefs.v1', LOCAL_KEY = 'chordbook.songs.v1';
 const S = {
   songs: [], loaded: false, mode: 'local', db: null, col: null, uid: null, dl: null,
   route: { name: 'library', id: null }, q: '', sort: 'recent',
-  view: { t: 0, capo: 0 }, draft: null, optsOpen: false, undo: [], dragMode: false, lines: [],
+  view: { t: 0, capo: 0 }, draft: null, optsOpen: false, undo: [], dragMode: false, lines: [], songTab: 'lyrics',
   assets: null, sample: null, imgLimits: null, mediaNew: [], mediaTrash: [], scan: null, pick: null, tabAll: false, tabOpen: {},
+  ytSong: null,
   prefs: { fs: 19, diagrams: true, acc: 'auto', vol: 80, speed: 3 }, standalone: false
 };
 const byId = id => S.songs.find(s => s.id === id);
@@ -876,6 +904,21 @@ function sheetHtml(lines, shift, flats, media) {
     </section>`;
   }).join('');
 }
+function mediaGalleryHtml(s) {
+  const lines = parseSheet(s.body), media = mediaMap(s.media);
+  const heads = lines.filter(L => L.type === 'section' && media[L.key]);
+  if (!heads.length) return '<p class="ln plain" style="color:var(--muted)">ยังไม่มีรูป Strumming หรือ Tab ในเพลงนี้ กด “แก้ไข” เพื่อเพิ่ม</p>';
+  return `<div class="mediaGallery">${heads.map(L => {
+    const m = media[L.key];
+    return `<section class="mgItem">
+      <h3 class="mgHead">${esc(L.text)}</h3>
+      <div class="mgRow">
+        ${m.tab ? `<figure class="mgFig"><img data-blob="${esc(m.tab)}" alt="Tab ${esc(L.text)}" data-a="zoom" data-id="${esc(m.tab)}"><figcaption>Tab</figcaption></figure>` : ''}
+        ${m.strum ? `<figure class="mgFig"><img data-blob="${esc(m.strum)}" alt="Strumming หรือ picking ของ ${esc(L.text)}" data-a="zoom" data-id="${esc(m.strum)}"><figcaption>Strumming / Picking</figcaption></figure>` : ''}
+      </div>
+    </section>`;
+  }).join('')}</div>`;
+}
 function diagramsHtml(lines, shift, flats) {
   const seen = new Set(), items = [];
   for (const L of lines) if (L.segs) for (const s of L.segs) if (s.chord) {
@@ -929,7 +972,7 @@ function renderList() {
   S._refocusQ = false;
   renderSyncStat();
 }
-const scanBtn = (mode, cls, label) => S.sample && S.imgLimits ? `<button class="btn${cls ? ' ' + cls : ''}" data-a="scan" data-mode="${mode}" type="button">${label}</button>` : '';
+const scanBtn = (mode, cls, label) => S.sample ? `<button class="btn${cls ? ' ' + cls : ''}" data-a="scan" data-mode="${mode}" type="button">${label}</button>` : '';
 function footHtml() {
   const t = S.mode === 'db' ? 'เพลงถูกบันทึกในบัญชีของคุณ เปิดดูได้จากทุกอุปกรณ์ที่ล็อกอินบัญชีเดียวกัน'
     : S.mode === 'github' ? `เพลงและรูปถูกเก็บในรีโป GitHub <b>${esc(GH.cfg.repo)}</b> และเก็บสำเนาไว้ในเครื่องนี้เพื่อเปิดได้เร็ว`
@@ -940,15 +983,23 @@ function footHtml() {
 
 function viewSong() {
   const s = curSong(); if (!s) return '';
-  const chips = [s.bpm ? `${s.bpm} BPM` : '', s.bpm || s.beats ? `${s.beats === 6 ? '6/8' : (s.beats || 4) + '/4'}` : ''].filter(Boolean);
+  const meterLabel = n => n === 6 ? '6/8' : n === 9 ? '9/8' : n === 16 ? '16 บีท' : `${n || 4}/4`;
+  const chips = [s.bpm ? `${s.bpm} BPM` : '', s.bpm || s.beats ? meterLabel(s.beats) : ''].filter(Boolean);
   return `
   <div class="bar"><button class="btn ghost" data-a="back">← เพลงทั้งหมด</button><button class="btn" data-a="edit">แก้ไข</button></div>
   <header class="songhead">${s.cover ? `<img class="hcover" data-blob="${esc(s.cover)}" alt="รูปปก" data-a="zoom" data-id="${esc(s.cover)}">` : ''}<div><h1>${esc(s.title)}</h1>${s.artist ? `<p class="artist">${esc(s.artist)}</p>` : ''}
   ${chips.length ? `<div class="chips">${chips.map(c => `<span>${esc(c)}</span>`).join('')}</div>` : ''}</div></header>
+  <div id="ytwrap"></div>
   <div id="dyn"></div>`;
 }
 function renderDyn() {
   const s = curSong(), dyn = $('#dyn'); if (!s || !dyn) return;
+  const hasMedia = (s.media || []).length > 0;
+  const tabsHtml = hasMedia ? `<div class="songtabs"><span class="seg" role="group" aria-label="มุมมองเพลง">
+    <button data-a="songtab" data-v="lyrics" class="${S.songTab === 'media' ? '' : 'on'}" aria-pressed="${S.songTab !== 'media'}">เนื้อเพลง &amp; คอร์ด</button>
+    <button data-a="songtab" data-v="media" class="${S.songTab === 'media' ? 'on' : ''}" aria-pressed="${S.songTab === 'media'}">Strumming &amp; Tab</button>
+  </span></div>` : '';
+  if (hasMedia && S.songTab === 'media') { dyn.innerHTML = tabsHtml + mediaGalleryHtml(s); return; }
   const { t, capo } = S.view, shift = t - capo;
   const lines = parseSheet(s.body), key = effKey(s, lines), flats = flatsFor(key, shift);
   S.lines = lines;
@@ -960,7 +1011,7 @@ function renderDyn() {
   } else if (capo > 0) info = `<div class="keyinfo"><span class="c">คาโป้ช่อง ${capo}: รูปคอร์ดที่แสดงคือรูปที่ต้องกด</span></div>`;
   const acc = [['auto', 'อัตโนมัติ'], ['sharp', '♯ ชาร์ป'], ['flat', '♭ แฟลต']]
     .map(([v, l]) => `<button data-a="acc" data-v="${v}" class="${S.prefs.acc === v ? 'on' : ''}" aria-pressed="${S.prefs.acc === v}">${l}</button>`).join('');
-  dyn.innerHTML = `
+  dyn.innerHTML = tabsHtml + `
   <div class="tools">
     <div class="stepper" role="group" aria-label="เปลี่ยนคีย์">
       <span class="lbl">เปลี่ยนคีย์</span>
@@ -985,11 +1036,10 @@ function renderDyn() {
       <div><span class="lbl">รูปแบบ ♯/♭</span><span class="seg" role="group">${acc}</span></div>
       <div><span class="lbl">ขนาดตัวอักษร</span><button class="sq" data-a="fs-" aria-label="ลดขนาดตัวอักษร" style="font-size:14px">A</button> <button class="sq" data-a="fs+" aria-label="เพิ่มขนาดตัวอักษร" style="font-size:22px">A</button></div>
       <div><span class="seg" role="group"><button data-a="dg" class="${S.prefs.diagrams ? 'on' : ''}" aria-pressed="${S.prefs.diagrams}">แสดงไดอะแกรมคอร์ด</button></span></div>
-      ${(s.media || []).some(m => m.t === 'tab') ? `<div><span class="seg" role="group"><button data-a="tabsall" class="${S.tabAll ? 'on' : ''}" aria-pressed="${S.tabAll}">แสดง Tab ทุกส่วน</button></span></div>` : ''}
     </div>
   </details>
   ${S.prefs.diagrams ? diagramsHtml(lines, shift, flats) : ''}
-  <article class="sheet${S.dragMode ? ' drag-on' : ''}" style="--fs:${S.prefs.fs}px">${sheetHtml(lines, shift, flats, mediaMap(s.media)) || '<p class="ln plain" style="color:var(--muted)">ยังไม่มีเนื้อเพลง กด “แก้ไข” เพื่อเพิ่มคอร์ดและเนื้อร้อง</p>'}</article>`;
+  <article class="sheet${S.dragMode ? ' drag-on' : ''}" style="--fs:${S.prefs.fs}px">${sheetHtml(lines, shift, flats) || '<p class="ln plain" style="color:var(--muted)">ยังไม่มีเนื้อเพลง กด “แก้ไข” เพื่อเพิ่มคอร์ดและเนื้อร้อง</p>'}</article>`;
 }
 
 const SAMPLE = {
@@ -1011,7 +1061,7 @@ The [Em]hour I [D]first be[G]lieved`
 };
 function viewEdit() {
   const d = S.draft, isNew = !S.route.id;
-  const beatsOpts = [[2, '2/4'], [3, '3/4'], [4, '4/4'], [5, '5/4'], [6, '6/8']]
+  const beatsOpts = [[2, '2/4'], [3, '3/4'], [4, '4/4'], [5, '5/4'], [6, '6/8'], [9, '9/8'], [16, '16 บีท (นับย่อย 16th)']]
     .map(([v, l]) => `<option value="${v}"${Number(d.beats) === v ? ' selected' : ''}>${l}</option>`).join('');
   return `
   <div class="bar"><button class="btn ghost" data-a="cancel">← ยกเลิก</button>
@@ -1031,6 +1081,8 @@ function viewEdit() {
       <div class="field"><label for="f_capo">คาโป้เริ่มต้น</label><input id="f_capo" type="number" inputmode="numeric" min="0" max="11" value="${esc(d.capo || 0)}"></div>
     </div>
     <p class="hint" style="margin:-8px 0 0">คีย์คือคีย์ของคอร์ดที่คุณพิมพ์ไว้ ถ้าเว้นว่างระบบจะเดาจากคอร์ดแรก</p>
+    <div class="field"><label for="f_yt">ลิงก์ YouTube (ฟังเสียงประกอบ ไม่ใส่ก็ได้)</label><input id="f_yt" type="text" value="${esc(d.youtube || '')}" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off"></div>
+    <p class="hint" style="margin:-8px 0 0">เล่นเป็นแถบเสียงอย่างเดียว ไม่แสดงวิดีโอ ใช้ได้เมื่อเปิดหน้านี้ในเบราว์เซอร์ทั่วไป (หน้าที่เผยแพร่ผ่าน Claude โดยตรงจะไม่เล่นในหน้า แต่มีปุ่มเปิดไป YouTube ให้แทน)</p>
     <div class="err" id="formErr" role="alert"></div>
     <div class="split">
       <div class="field">
@@ -1071,7 +1123,8 @@ function renderView() {
   if (!S.loaded) { v.innerHTML = '<p class="loading">กำลังเปิดสมุดคอร์ด…</p>'; return; }
   if (S.route.name !== 'edit') S.scan = null;
   if (S.route.name !== 'song' && AS.on) asStop();
-  if (S.route.name === 'song') { v.innerHTML = viewSong(); renderDyn(); }
+  if (S.route.name !== 'song' && S.ytSong) YTC.close();
+  if (S.route.name === 'song') { v.innerHTML = viewSong(); renderDyn(); renderYt(); }
   else if (S.route.name === 'edit') { S._panelSig = null; v.innerHTML = viewEdit(); updatePreview(); }
   else { v.innerHTML = viewLibrary(); renderList(); }
   renderSongTempoRow(); renderAs();
@@ -1082,7 +1135,8 @@ function openSong(id) {
   const s = byId(id); if (!s) return;
   S.route = { name: 'song', id };
   const vp = S.mode === 'github' ? vpGet(id) : null;
-  S.view = { t: vp ? vp.t : s.transpose || 0, capo: vp ? vp.capo : s.capo || 0 }; S.undo = []; S.dragMode = false; S.tabAll = false; S.tabOpen = {}; asStop();
+  S.view = { t: vp ? vp.t : s.transpose || 0, capo: vp ? vp.capo : s.capo || 0 }; S.undo = []; S.dragMode = false; S.tabAll = false; S.tabOpen = {}; S.songTab = 'lyrics'; asStop();
+  YTC.open(s);
   if (s.bpm) Metro.setBpm(s.bpm);
   if (s.beats) Metro.setBeats(s.beats);
   renderView(); window.scrollTo(0, 0);
@@ -1090,7 +1144,7 @@ function openSong(id) {
 function openEditor(id, preset, scan) {
   const s = id ? byId(id) : null;
   const base = s || preset || { title: '', artist: '', key: '', bpm: '', beats: 4, capo: 0, body: '' };
-  S.draft = { title: base.title, artist: base.artist || '', key: base.key || '', bpm: base.bpm || '', beats: base.beats || 4, capo: base.capo || 0, body: base.body || '', cover: base.cover || '',
+  S.draft = { title: base.title, artist: base.artist || '', key: base.key || '', bpm: base.bpm || '', beats: base.beats || 4, capo: base.capo || 0, body: base.body || '', cover: base.cover || '', youtube: base.youtube || '',
     media: (base.media || []).map(e => ({ k: e.k, t: e.t, id: e.id })) };
   S.route = { name: 'edit', id: id || null }; S.undo = []; S.mediaNew = []; S.mediaTrash = []; S._panelSig = null;
   S.scan = scan || null;
@@ -1116,12 +1170,14 @@ async function saveDraft() {
   if (d.key.trim()) { const k = parseKey(d.key); if (!k) return fail('คีย์ไม่ถูกต้อง ลองพิมพ์แบบ G, Am, Bb หรือ F#m', '#f_key'); key = k.text; }
   const bpm = d.bpm === '' || d.bpm == null ? 0 : Math.round(Number(d.bpm));
   if (bpm && (bpm < 30 || bpm > 240)) return fail('BPM ต้องอยู่ระหว่าง 30 ถึง 240', '#f_bpm');
+  const yt = d.youtube.trim();
+  if (yt && !ytId(yt)) return fail('ลิงก์ YouTube ไม่ถูกต้อง ลองวางลิงก์แบบ youtube.com/watch?v=… หรือ youtu.be/…', '#f_yt');
   const ex = S.route.id ? byId(S.route.id) : null;
   const song = {
     id: ex ? ex.id : newId(), title, artist: d.artist.trim(), key, bpm, beats: Number(d.beats) || 4,
     capo: Math.min(11, Math.max(0, Math.round(Number(d.capo)) || 0)), transpose: ex ? (ex.transpose || 0) : 0,
     body: d.body.replace(/\s+$/, ''), createdAt: ex ? (ex.createdAt || Date.now()) : Date.now(),
-    media: d.media.map(e => ({ k: e.k, t: e.t, id: e.id })), cover: d.cover || ''
+    media: d.media.map(e => ({ k: e.k, t: e.t, id: e.id })), cover: d.cover || '', youtube: yt
   };
   try { await saveSong(song); } catch (e) { return fail('บันทึกไม่สำเร็จ ลองอีกครั้ง'); }
   dropAssets(S.mediaTrash.filter(id => id !== song.cover && !song.media.some(e => e.id === id))); S.mediaNew = []; S.mediaTrash = [];
@@ -1155,8 +1211,10 @@ async function backupJson() {
   return JSON.stringify(data, null, 1);
 }
 function downloadText(name, text) {
-  const u = URL.createObjectURL(new Blob([text], { type: 'application/json' })), a = document.createElement('a');
-  a.href = u; a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+  try {
+    const u = URL.createObjectURL(new Blob([text], { type: 'application/json' })), a = document.createElement('a');
+    a.href = u; a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+  } catch (e) { throw { decode: true }; }
 }
 function openBackup() {
   modal(`<h2>สำรองและนำเข้าข้อมูล</h2>
@@ -1173,7 +1231,7 @@ async function doExport() {
   if (S.dl) {
     try { await S.dl.save({ filename: 'chordbook-backup.json', data: json }); if (box) box.innerHTML = ''; return; }
     catch (e) { if (e && e.code === 'declined') { if (box) box.innerHTML = ''; return; } }
-  } else if (S.standalone) { downloadText('chordbook-backup.json', json); if (box) box.innerHTML = ''; return; }
+  } else if (S.standalone) { try { downloadText('chordbook-backup.json', json); if (box) box.innerHTML = ''; return; } catch (e) {} }
   if (box) box.innerHTML = `<p style="margin-top:14px">บันทึกเป็นไฟล์ไม่ได้ในหน้านี้ คัดลอกข้อความด้านล่างไปเก็บไว้ได้เลย</p><textarea readonly id="expTa"></textarea>`;
   const ta = $('#expTa'); if (ta) { ta.value = json; ta.focus(); ta.select(); }
 }
@@ -1204,13 +1262,126 @@ async function doImport(file) {
         bpm: Math.min(240, Math.max(0, Math.round(Number(x.bpm)) || 0)), beats: [2,3,4,5,6].includes(Number(x.beats)) ? Number(x.beats) : 4,
         capo: Math.min(11, Math.max(0, Math.round(Number(x.capo)) || 0)), transpose: 0,
         body: String(x.body || '').slice(0, 60000), createdAt: Number(x.createdAt) || Date.now(),
-        media, cover: await mapId(x.cover)
+        media, cover: await mapId(x.cover), youtube: typeof x.youtube === 'string' && ytId(x.youtube) ? x.youtube.trim().slice(0, 300) : ''
       });
       n++;
     }
     closeModal(); renderView(); toast(`นำเข้า ${n} เพลงแล้ว`);
   } catch (e) { toast('อ่านไฟล์ไม่ได้ ตรวจว่าเป็นไฟล์สำรองจากสมุดคอร์ด'); }
 }
+
+/* ================= youtube player (audio-only, no video shown) ================= */
+function ytId(url) {
+  const m = /(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/.exec(String(url || '').trim());
+  return m ? m[1] : '';
+}
+const ytFmt = sec => { sec = Math.max(0, Math.floor(sec || 0)); const m = Math.floor(sec / 60), r = sec % 60; return m + ':' + String(r).padStart(2, '0'); };
+const YTC = {
+  libState: 'idle', waiters: [], player: null, playerReady: false, cur: null, playing: false, pos: 0, dur: 0, err: false, pollT: null,
+  loadLib(cb) {
+    if (this.libState === 'ready' || this.libState === 'blocked') return cb();
+    this.waiters.push(cb);
+    if (this.libState !== 'idle') return;
+    this.libState = 'loading';
+    const done = ok => {
+      if (this.libState !== 'loading') return;
+      this.libState = ok ? 'ready' : 'blocked';
+      const w = this.waiters; this.waiters = []; w.forEach(f => f());
+    };
+    const to = setTimeout(() => done(false), 4000);
+    window.onYouTubeIframeAPIReady = () => { clearTimeout(to); done(true); };
+    const s = document.createElement('script');
+    s.src = 'https://www.youtube.com/iframe_api';
+    s.onerror = () => { clearTimeout(to); done(false); };
+    document.head.append(s);
+  },
+  open(song) {
+    const id = ytId(song.youtube);
+    if (!id) { this.close(); return; }
+    if (S.ytSong === song.id && this.cur === id) { renderYt(); return; }
+    if (this.playing) { try { this.player && this.player.pauseVideo(); } catch (e) {} }
+    this._stopPoll();
+    S.ytSong = song.id; this.cur = id; this.playing = false; this.pos = 0; this.dur = 0; this.err = false;
+    renderYt();
+    this.loadLib(() => {
+      if (this.libState !== 'ready') { renderYt(); return; }
+      if (this.player) this.player.cueVideoById(id);
+      else this._create(id);
+    });
+  },
+  close() {
+    if (this.playing) { try { this.player && this.player.pauseVideo(); } catch (e) {} }
+    this._stopPoll();
+    S.ytSong = null; this.cur = null; this.playing = false;
+    const el = $('#ytwrap'); if (el) el.innerHTML = '';
+  },
+  _create(id) {
+    const box = $('#ytbox'); if (!box) return;
+    box.innerHTML = '';
+    const host = document.createElement('div'); box.append(host);
+    try {
+      this.player = new window.YT.Player(host, {
+        videoId: id, playerVars: { playsinline: 1, controls: 0, modestbranding: 1, rel: 0 },
+        events: {
+          onReady: () => { this.playerReady = true; try { this.dur = this.player.getDuration() || 0; } catch (e) {} renderYt(); },
+          onStateChange: e => this._onState(e),
+          onError: () => { this.err = true; renderYt(); }
+        }
+      });
+    } catch (e) { this.libState = 'blocked'; renderYt(); }
+  },
+  _onState(e) {
+    const St = window.YT.PlayerState;
+    if (e.data === St.PLAYING) { this.playing = true; try { this.dur = this.player.getDuration() || this.dur; } catch (err) {} this._startPoll(); }
+    else { this.playing = false; this._stopPoll(); if (e.data === St.CUED) { try { this.dur = this.player.getDuration() || 0; } catch (err) {} } }
+    renderYt();
+  },
+  toggle() {
+    if (!this.player || !this.playerReady) return;
+    try { const St = window.YT.PlayerState, st = this.player.getPlayerState(); if (st === St.PLAYING) this.player.pauseVideo(); else this.player.playVideo(); } catch (e) {}
+  },
+  seek(v) {
+    if (!this.player || !this.playerReady) return;
+    this.pos = v; try { this.player.seekTo(v, true); } catch (e) {}
+    const t = $('#ytTime'); if (t) t.textContent = ytFmt(this.pos) + ' / ' + ytFmt(this.dur);
+  },
+  _startPoll() {
+    this._stopPoll();
+    this.pollT = setInterval(() => {
+      if (!this.player) return;
+      try { this.pos = this.player.getCurrentTime() || 0; } catch (e) {}
+      const seek = $('#ytSeek'), t = $('#ytTime');
+      if (seek && document.activeElement !== seek) seek.value = Math.round(this.pos);
+      if (t) t.textContent = ytFmt(this.pos) + ' / ' + ytFmt(this.dur);
+    }, 500);
+  },
+  _stopPoll() { clearInterval(this.pollT); this.pollT = null; }
+};
+const ytPlayIcon = playing => playing
+  ? '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>'
+  : '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
+function ytWrapHtml() {
+  const song = curSong(); if (!song || S.ytSong !== song.id) return '';
+  const url = song.youtube; if (!url) return '';
+  const linkBtn = `<a class="ytlink" href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="เปิดใน YouTube" title="เปิดใน YouTube"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M14 3h7v7h-2V6.4l-9.3 9.3-1.4-1.4L17.6 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z" fill="currentColor"/></svg></a>`;
+  if (YTC.libState === 'blocked' || YTC.err) {
+    const msg = YTC.err ? 'วิดีโอนี้เล่นในหน้านี้ไม่ได้ (เจ้าของวิดีโออาจปิดการฝังเล่น)' : 'หน้านี้เล่นเสียงจาก YouTube ในตัวไม่ได้';
+    return `<div class="ytbar"><div class="ytmid"><span class="ytnote">${esc(msg)}</span></div>${linkBtn}</div>`;
+  }
+  const ready = YTC.playerReady;
+  return `<div class="ytbar">
+    <button class="ytplay" id="ytPlay" data-a="ytplay" ${ready ? '' : 'disabled'} aria-label="${YTC.playing ? 'หยุดเพลง' : 'เล่นเพลง'}">${ytPlayIcon(YTC.playing)}</button>
+    <div class="ytmid">
+      <span class="yttitle">${ready ? 'ฟังเสียงประกอบ (ไม่มีวิดีโอ)' : 'กำลังเตรียมเสียง…'}</span>
+      <div class="ytrow">
+        <input type="range" class="ytseek" id="ytSeek" min="0" max="${Math.max(1, Math.round(YTC.dur))}" value="${Math.round(YTC.pos)}" ${ready ? '' : 'disabled'} aria-label="ตำแหน่งเพลง">
+        <span class="yttime" id="ytTime">${ytFmt(YTC.pos)} / ${ytFmt(YTC.dur)}</span>
+      </div>
+    </div>
+    ${linkBtn}
+  </div>`;
+}
+function renderYt() { const el = $('#ytwrap'); if (el) el.innerHTML = ytWrapHtml(); }
 
 /* ================= metronome ================= */
 const Metro = {
@@ -1234,10 +1405,19 @@ const Metro = {
       this.next += 60 / this.bpm; this.beat = (this.beat + 1) % this.beats;
     }
   },
+  accentTier(b) {
+    if (b === 0) return 2;
+    const n = this.beats;
+    if (n === 6 && b === 3) return 1;
+    if (n === 16 && b % 4 === 0) return 1;
+    if (n === 9 && b % 3 === 0) return 1;
+    return 0;
+  },
   click(t, b) {
+    const tier = this.accentTier(b);
     const o = this.ctx.createOscillator(), g = this.ctx.createGain();
-    o.type = 'square'; o.frequency.value = b === 0 ? 1568 : 1046;
-    const v = Math.max(.0001, this.vol * this.vol * .45);
+    o.type = 'square'; o.frequency.value = tier === 2 ? 1568 : tier === 1 ? 1318 : 1046;
+    const v = Math.max(.0001, this.vol * this.vol * .45 * (tier === 2 ? 1 : tier === 1 ? .82 : .6));
     g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .002); g.gain.exponentialRampToValueAtTime(.0001, t + .055);
     o.connect(g); g.connect(this.ctx.destination); o.start(t); o.stop(t + .07);
   },
@@ -1256,7 +1436,10 @@ const Metro = {
     if (this.taps.length > 1) this.setBpm(60000 / ((this.taps[this.taps.length - 1] - this.taps[0]) / (this.taps.length - 1)));
   },
   buildLamps() {
-    $('#lamps').innerHTML = Array.from({ length: this.beats }, (_, i) => `<span class="lamp${i === 0 ? ' first' : ''}"></span>`).join('');
+    $('#lamps').innerHTML = Array.from({ length: this.beats }, (_, i) => {
+      const tier = this.accentTier(i);
+      return `<span class="lamp${tier === 2 ? ' first' : tier === 1 ? ' mid' : ''}"></span>`;
+    }).join('');
   },
   lampOn(i) { document.querySelectorAll('#lamps .lamp').forEach((el, k) => el.classList.toggle('on', k === i)); },
   ui() {
@@ -1313,6 +1496,8 @@ document.addEventListener('click', e => {
     case 'zoomscan': if (S.scan) zoom(S.scan.thumbs[+el.dataset.i]); break;
     case 'tabtoggle': { const k = el.dataset.key; S.tabOpen[k] = !isTabShown(k); if (S.route.name === 'edit') updatePreview(); else renderDyn(); break; }
     case 'tabsall': S.tabAll = !S.tabAll; S.tabOpen = {}; renderDyn(); break;
+    case 'songtab': S.songTab = el.dataset.v; renderDyn(); break;
+    case 'ytplay': YTC.toggle(); break;
     case 'pick': { S.pick = { key: el.dataset.key, t: el.dataset.t }; const f = $('#mediaFile'); f.value = ''; f.click(); break; }
     case 'unpick': removeMedia(el.dataset.key, el.dataset.t); break;
     case 'reassign': reassignMedia(el.dataset.id); break;
@@ -1334,8 +1519,9 @@ document.addEventListener('input', e => {
   if (id === 'q') { S.q = e.target.value; S._refocusQ = true; renderList(); }
   else if (id === 'bpmRange') Metro.setBpm(e.target.value);
   else if (id === 'volRange') { Metro.vol = e.target.value / 100; S.prefs.vol = Number(e.target.value); savePrefs(); }
+  else if (id === 'ytSeek') YTC.seek(Number(e.target.value));
   else if (D && S.route.name === 'edit') {
-    const map = { f_title: 'title', f_artist: 'artist', f_key: 'key', f_bpm: 'bpm', f_capo: 'capo', f_body: 'body' };
+    const map = { f_title: 'title', f_artist: 'artist', f_key: 'key', f_bpm: 'bpm', f_capo: 'capo', f_body: 'body', f_yt: 'youtube' };
     if (map[id]) { D[map[id]] = e.target.value; if (id === 'f_body' || id === 'f_key') updatePreview(); $('#formErr').textContent = ''; }
   }
 });
@@ -1515,8 +1701,12 @@ async function prepScan(files, maxCount) {
 async function runScan(fileList, mode, tier) {
   const files = [...fileList].filter(f => !f.type || /^image\//.test(f.type));
   if (!files.length) return;
-  if (!S.sample || !S.imgLimits) {
+  if (!S.sample) {
     return modal(`<h2>ยังใช้ฟีเจอร์นี้ไม่ได้</h2><p>การแปลงรูปเป็นคอร์ดใช้ Claude ในบัญชีของคุณ ซึ่งยังไม่พร้อมในหน้านี้ ลองเปิดเพจนี้จากเว็บหรือแอป Claude ที่ล็อกอินอยู่ แล้วลองอีกครั้ง</p><div class="acts"><button class="btn" data-a="mclose">ปิด</button></div>`);
+  }
+  if (!S.imgLimits) { try { const lim2 = await S.sample.limits(); S.imgLimits = lim2 && lim2.images || null; } catch (e) {} }
+  if (!S.imgLimits) {
+    return modal(`<h2>ยังส่งรูปให้ Claude อ่านไม่ได้</h2><p>หน้านี้ยังไม่ได้รับสิทธิ์ส่งรูปให้ Claude อ่าน (คนละสิทธิ์กับการอัปโหลดรูปเก็บไว้) ลองปิดแล้วเปิดหน้านี้ใหม่ทั้งหน้า ถ้ายังไม่ได้ อาจเป็นเพราะบัญชีนี้ยังไม่เปิดให้ใช้ฟีเจอร์นี้</p><div class="acts"><button class="btn" data-a="mclose">ปิด</button></div>`);
   }
   const lim = S.imgLimits;
   if (files.length > lim.maxCount) return toast(`เลือกรูปได้ไม่เกิน ${lim.maxCount} รูปต่อครั้ง`);
