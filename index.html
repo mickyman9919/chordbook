@@ -137,8 +137,11 @@ details.opts summary{cursor:pointer;font:500 13px var(--ui);color:var(--muted);p
 .gap{height:.9em}
 .sec-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:1.3em 0 .55em}
 .blk:first-child .sec-row{margin-top:0}
-.sec-inline .ln{margin:0}
-.sec-inline .ln .ly{min-height:0}
+.sec-row.sec-inline{flex-wrap:nowrap;min-width:0}
+.sec-row.sec-inline .sec{flex:none}
+.instru-chords{display:flex;align-items:flex-start;gap:10px;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.instru-chords .ln{flex:none;margin:0;white-space:nowrap}
+.instru-chords .ln .ly{min-height:0}
 .sec{display:inline-block;padding:1px 12px 1px 10px;border-left:3px solid var(--chord);background:var(--surface);font:600 .78em var(--ui);color:var(--muted)}
 .tabbtn{font:600 .72em var(--ui);border:1px solid var(--line);background:var(--raised);color:var(--muted);border-radius:999px;padding:1px 11px;cursor:pointer}
 .tabbtn.on{background:var(--chord);border-color:var(--chord);color:var(--on-chord)}
@@ -934,7 +937,7 @@ function sheetHtml(lines, shift, flats, media) {
     });
     const tabBtn = m.tab ? `<button class="tabbtn${shown ? ' on' : ''}" data-a="tabtoggle" data-key="${esc(g.head.key)}" aria-pressed="${shown}">Tab</button>` : '';
     const secRow = instrumental
-      ? `<div class="sec-row sec-inline"><div class="sec">${esc(g.head.text)}</div>${body}${tabBtn}</div>`
+      ? `<div class="sec-row sec-inline"><div class="sec">${esc(g.head.text)}</div><div class="instru-chords">${body}</div>${tabBtn}</div>`
       : `<div class="sec-row"><div class="sec">${esc(g.head.text)}</div>${tabBtn}</div>`;
     return `<section class="blk">
       ${secRow}
@@ -1133,7 +1136,7 @@ function viewEdit() {
             <option value="" selected disabled>+ หัวข้อ…</option>
             <option value="Intro">Intro</option><option value="Verse">Verse</option><option value="Pre-Chorus">Pre-Chorus</option>
             <option value="Chorus">Chorus</option><option value="Bridge">Bridge</option><option value="Solo">Solo</option>
-            <option value="Interlude">Interlude</option><option value="Outro">Outro</option><option value="Ending">Ending</option>
+            <option value="Instru">Instru</option><option value="Interlude">Interlude</option><option value="Outro">Outro</option><option value="Ending">Ending</option>
             <option value="__custom">กำหนดเอง…</option>
           </select>${scanBtn('draft', 'slim', 'นำเข้าจากรูป')}</div>
         <textarea id="f_body" spellcheck="false" aria-label="คอร์ดและเนื้อเพลง">${esc(d.body)}</textarea>
@@ -1607,7 +1610,15 @@ document.addEventListener('change', e => {
   else if (id === 'bpmIn') Metro.setBpm(e.target.value);
   else if (id === 'beatsSel') Metro.setBeats(Number(e.target.value));
   else if (id === 'f_beats' && S.draft) S.draft.beats = Number(e.target.value);
-  else if (id === 'secIns') { const v = e.target.value; if (v === '__custom') insertAtCursor('# \n', 1); else if (v) insertAtCursor(`# ${v}\n`, 0); e.target.value = ''; }
+  else if (id === 'secIns') {
+    const v = e.target.value;
+    if (v === '__custom') insertAtCursor('# \n', 1);
+    else if (v) {
+      const instruType = ['Intro', 'Instru', 'Solo', 'Outro', 'Interlude'].includes(v);
+      insertAtCursor(instruType ? `# ${v}\n[]` : `# ${v}\n`, instruType ? 1 : 0);
+    }
+    e.target.value = '';
+  }
   else if (id === 'impFile' && e.target.files[0]) doImport(e.target.files[0]);
   else if (id === 'mediaFile' && e.target.files[0]) attachMedia(e.target.files[0]);
   else if (id === 'scanFile' && e.target.files.length) runScan(e.target.files, S.scanMode || 'new');
