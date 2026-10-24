@@ -929,7 +929,8 @@ function sheetHtml(lines, shift, flats, media) {
     const items = g.items.filter(li => lines[li].type === 'line');
     const instrumental = items.length > 0 && items.every(li => {
       const L = lines[li];
-      return L.segs.some(sg => sg.chord || sg.mark) && !L.segs.some(sg => sg.text && sg.text.trim());
+      return L.segs.some(sg => sg.chord || sg.mark) &&
+        !L.segs.some(sg => sg.text && sg.text.trim() && !DECOR.test(sg.text.trim()));
     });
     const tabBtn = m.tab ? `<button class="tabbtn${shown ? ' on' : ''}" data-a="tabtoggle" data-key="${esc(g.head.key)}" aria-pressed="${shown}">Tab</button>` : '';
     const secRow = instrumental
