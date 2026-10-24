@@ -137,6 +137,8 @@ details.opts summary{cursor:pointer;font:500 13px var(--ui);color:var(--muted);p
 .gap{height:.9em}
 .sec-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:1.3em 0 .55em}
 .blk:first-child .sec-row{margin-top:0}
+.sec-inline .ln{margin:0}
+.sec-inline .ln .ly{min-height:0}
 .sec{display:inline-block;padding:1px 12px 1px 10px;border-left:3px solid var(--chord);background:var(--surface);font:600 .78em var(--ui);color:var(--muted)}
 .tabbtn{font:600 .72em var(--ui);border:1px solid var(--line);background:var(--raised);color:var(--muted);border-radius:999px;padding:1px 11px;cursor:pointer}
 .tabbtn.on{background:var(--chord);border-color:var(--chord);color:var(--on-chord)}
@@ -424,7 +426,7 @@ function diagramSvg(shape, label) {
 
 /* ================= chord sheet parser ================= */
 const isMark = ch => /\p{Mn}/u.test(ch);
-const DECOR = /^(?:\|\|?|\/|-|\(?x\d+\)?|N\.?C\.?)$/i;
+const DECOR = /^(?:\|\|?|\/|-|\(?x\d+\)?|\(\s*\d+\s*times?\s*\)|N\.?C\.?)$/i;
 
 function colToIdx(s, col) {
   let vc = 0, i = 0;
@@ -435,7 +437,7 @@ function colToIdx(s, col) {
   return s.length;
 }
 function chordLineToks(line) {
-  const t = line.replace(/\t/g, '    '), re = /\S+/g, toks = [];
+  const t = line.replace(/\t/g, '    '), re = /\([^)]*\)|\S+/g, toks = [];
   let m, chords = 0;
   while ((m = re.exec(t))) {
     const isC = parseChord(m[0]) !== null;
@@ -924,11 +926,22 @@ function sheetHtml(lines, shift, flats, media) {
     const body = g.items.map(li => lineHtml(lines[li], li, shift, flats)).join('');
     if (!g.head) return body ? `<div class="blk"><div class="blk-main"><div class="blk-lines">${body}</div></div></div>` : '';
     const m = media[g.head.key] || {}, shown = !!(m.tab && isTabShown(g.head.key));
+    const items = g.items.filter(li => lines[li].type === 'line');
+    const instrumental = items.length > 0 && items.every(li => {
+      const L = lines[li];
+      return L.segs.some(sg => sg.chord || sg.mark) && !L.segs.some(sg => sg.text && sg.text.trim());
+    });
+    const tabBtn = m.tab ? `<button class="tabbtn${shown ? ' on' : ''}" data-a="tabtoggle" data-key="${esc(g.head.key)}" aria-pressed="${shown}">Tab</button>` : '';
+    const secRow = instrumental
+      ? `<div class="sec-row sec-inline"><div class="sec">${esc(g.head.text)}</div>${body}${tabBtn}</div>`
+      : `<div class="sec-row"><div class="sec">${esc(g.head.text)}</div>${tabBtn}</div>`;
     return `<section class="blk">
-      <div class="sec-row"><div class="sec">${esc(g.head.text)}</div>${m.tab ? `<button class="tabbtn${shown ? ' on' : ''}" data-a="tabtoggle" data-key="${esc(g.head.key)}" aria-pressed="${shown}">Tab</button>` : ''}</div>
+      ${secRow}
       ${shown ? `<figure class="tabimg"><img data-blob="${esc(m.tab)}" alt="Tab ${esc(g.head.text)}" data-a="zoom" data-id="${esc(m.tab)}"></figure>` : ''}
-      <div class="blk-main${m.strum ? ' has-strum' : ''}"><div class="blk-lines">${body}</div>
-      ${m.strum ? `<figure class="strumimg"><img data-blob="${esc(m.strum)}" alt="Strumming หรือ picking ของ ${esc(g.head.text)}" data-a="zoom" data-id="${esc(m.strum)}"><figcaption>Strumming / Picking</figcaption></figure>` : ''}</div>
+      ${instrumental
+        ? (m.strum ? `<figure class="strumimg"><img data-blob="${esc(m.strum)}" alt="Strumming หรือ picking ของ ${esc(g.head.text)}" data-a="zoom" data-id="${esc(m.strum)}"><figcaption>Strumming / Picking</figcaption></figure>` : '')
+        : `<div class="blk-main${m.strum ? ' has-strum' : ''}"><div class="blk-lines">${body}</div>
+      ${m.strum ? `<figure class="strumimg"><img data-blob="${esc(m.strum)}" alt="Strumming หรือ picking ของ ${esc(g.head.text)}" data-a="zoom" data-id="${esc(m.strum)}"><figcaption>Strumming / Picking</figcaption></figure>` : ''}</div>`}
     </section>`;
   }).join('');
 }
@@ -1726,9 +1739,9 @@ Rules for "body" (one string, lines separated by \\n):
 1. Chords go inline in square brackets, placed immediately before the character or syllable they are printed above. Use horizontal position: a chord printed above a lyric line belongs right before the character sitting directly under the chord's first letter. Example: "[G]Amazing [C]grace". Never leave chord names on a separate line above the lyrics.
 2. Thai text: copy exactly as printed. Never separate a consonant from its vowel or tone marks; put a chord before a whole consonant cluster.
 3. Chord spelling: A-G with b or # (write the flat sign as b and the sharp sign as #), then the quality as printed: m, 7, m7, maj7, sus2, sus4, add9, dim, 6, and slash basses like G/B. Copy the chords exactly as printed. Do not add, remove, simplify, transpose or correct them.
-4. Lines that contain only chords (intro, interlude, solo, outro) become chord-only lines of bracketed chords, e.g. "[Am] [F] [C] [G]".
-5. Bar lines: wherever the sheet shows "|" or "/" as a measure separator between chords, write "[/]" there, e.g. "[G] [/] [C] [/] [D]".
-6. Section headings printed on the sheet (Intro, Verse 1, Chorus, Hook, Bridge, Solo, Outro, ท่อน 1, ฮุก, ...) go on their own line as "# " followed by the heading exactly as printed. Do not invent headings that are not printed. Put one blank line between sections.
+4. Lines that contain only chords (intro, interlude, solo, instru, outro) become chord-only lines of bracketed chords on the line directly below the "# " heading (no blank line between a heading and its own chord line — a blank line only goes between two different sections), e.g. "[Am] [F] [C] [G]".
+5. Bar lines: wherever the sheet shows "|" or "/" as a measure separator between chords, write "[/]" there, e.g. "[G] [/] [C] [/] [D]". If the sheet shows a repeat instruction inline among the chords, such as "(2 Times)", "(3 Times)" or "x2", keep it inline among the chords in the same bracket style and in the exact position printed, e.g. "[Am] [F] [(2 Times)] [C] [G]".
+6. Section headings printed on the sheet (Intro, Verse 1, Chorus, Hook, Bridge, Solo, Instru, Outro, ท่อน 1, ฮุก, ...) go on their own line as "# " followed by the heading exactly as printed — including "Instru" when that is the word printed on the sheet. Do not invent headings that are not printed. Put one blank line before each new section's heading (but not between a heading and its own first line of content).
 7. Copy lyrics exactly. Do not translate, fix spelling, complete missing words or invent anything. If a piece is unreadable, write "?" there and mention it in "notes".
 8. Skip page numbers, watermarks, ads, URLs and copyright footers. Tab and strumming diagrams are not transcribed; if the sheet has them, say so in "notes".
 9. Repeat marks such as "x2" or "ซ้ำ" stay as printed text on their own line; do not duplicate the section.
